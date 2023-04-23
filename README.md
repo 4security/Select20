@@ -1,10 +1,22 @@
-# Select20 - The Intelligent Privacy Todolist
+<h1 align="center">
+  <img src="images/inbox.png" alt="Select20 in action" width="1000"/>
+  <br><br>
+  Select20 - Natural Language Todo-App
+  <br>
+</h1>
 
-> The todo app Select20 leverages language recognition to manage tasks more efficently. The distraction-free and blazing fast app supports offline usage and compatibility to CalDav.
+<h4 align="center">The todo app Select20 leverages language recognition to manage tasks more efficently. The distraction-free and blazing fast app supports offline usage and compatibility to CalDav.</h4>
 
-<img src="images/inbox.png" alt="drawing"/>
 
-## Test it now!
+<p align="center">
+  <a href="#why-should-i-use-select20">Key Features</a> •
+  <a href="#how-to-use">How To Use</a> •
+  <a href="https://s20.lippke.li">Demo</a> •
+  <a href="https://github.com/liquididea/Select20/blob/main/DEVELOPER_DOCU.md">Developer Docu</a> •
+  <a href="https://raw.githubusercontent.com/liquididea/Select20/main/LICENCE">License</a>
+</p>
+
+## How to use
 
 Online Demo: Go to https://s20.lippke.li/ and select Demo mode
 
@@ -17,7 +29,7 @@ git clone https://github.com/liquididea/Select20.git
 ```
 
 2. Change the passwords in the backend-laravel/.env.example --> .env file
-3. Spin up docker
+3. Spin up Docker with <a href="https://docs.docker.com/compose/gettingstarted/">Docker Compose</a>
 
 ```sh
 docker compose up
@@ -32,31 +44,25 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 
 6. Open http://localhost:8081
 
-Quick Links: [Developer Docu](https://github.com/liquididea/Select20/blob/main/DEVELOPER_DOCU.md) - [Contributing](https://github.com/liquididea/Select20/blob/main/CONTRIBUTING.md) - [Code of Conduct](https://github.com/liquididea/Select20/blob/main/CODE_OF_CONDUCT.md)
-
 ## Why should I use Select20?
 
 ### Detects your natural language (NLP)
 
-<img src="images/mobile.png" align="right" alt="drawing" width="200"/>
-
-- weekday (mon, tue, ...)
-- time (12:12)
-- date (12.12.12 or half dates 12.12)
-- priority (p1, p2, p3, p4) with colors
-- recurring rule
-  - simple (every day, every sun)
-  - with (every 6 mon)
-  - display next event
-  - combined with time (every tue 17:00)
-- project - fuzzy search (#wor --> assigns project work)
-- duration (120m)
-- checklists (\* my checklist)
-- due date calendar suppress (!nocal)
+- p1,p2,p3,p4 --> Priority, p1 is the highest - colored red circle
+- #projectname --> Automatically moves the todo in the correct project
+- 30.12.2023 --> Full date with day.month.year - separted by dots
+- 30.12 --> Short date with day.month the software assumes the current year
+- 90m --> Todos can be sheduled with duration. Need for start due date.
+- every mon 19:00 --> Add recurring rule with time. Weekly rhythms are possible.
+- every 4 sun 10:00 --> Recurring rule on every X weeks
+- * Shopping --> Star --> Checklist with subtodos that will restore on reload.
+- https://example.com --> Add links and a short link is created (hover needed)
+  
+<img src="images/mobile.png" alt="drawing" width="300"/>
 
 ### Support for hyper dynamic todos
 
-<img src="images/subtasks.png" alt="drawing"/>
+<img src="images/subtasks.png" width="400" alt="drawing"/>
 
 - autofocus creation of todos
 - key data chips
@@ -67,6 +73,7 @@ Quick Links: [Developer Docu](https://github.com/liquididea/Select20/blob/main/D
   - project
 - tasks with subtasks
 - auto HTML strip
+- project - fuzzy search (#wor --> assigns project work)
 - auto detection of URL
   - detects the first URL
   - add a url button (new tab)
@@ -80,7 +87,7 @@ Quick Links: [Developer Docu](https://github.com/liquididea/Select20/blob/main/D
 
 ### Plan projects like PRO
 
-<img src="images/projects.png" align="right" alt="drawing" width="200"/>
+<img src="images/projects.png" alt="drawing" width="600"/>
 
 - default project: today / Upcoming / Inbox
 - indentation for sub projects
@@ -106,7 +113,7 @@ Quick Links: [Developer Docu](https://github.com/liquididea/Select20/blob/main/D
 
 ### Fallout shelter proof syncing
 
-<img src="images/fast.png" alt="drawing" width="250"/>
+<img src="images/fast.png" alt="drawing" width="300"/>
 
 - extreme caching
   - instant loading
@@ -144,9 +151,43 @@ Not-to-do - Simplify it:
 - dropdowns and lot of buttons
 - Datepicker
 
-## Why did I code the X millionst todo app?
+## FAQ
 
-The best todo app I tested was Todoist ... but I cannot self host the service and need to expose my private information for American agencies (aka 2Cloud"). So I started to code my own with Nextcloud in the background
+### How to shift a todo to other project?
+
+Edit the todo and add #projectname at the end and hit enter.
+
+### How can add subtodos?
+
+Click on the add symbol during hovering a todo.
+
+### How can search todos?
+
+Click on the search icon on the menu or put your cursor inside the input and press Strg+ArrowDown
+
+### How can I see hidden projects again?
+
+Click on the view icon
+
+### How to change the calendar of project?
+
+Edit the project. Select the calendar in the dropdown and safe.
+
+### I want to restore the last todo / undo a todo
+
+Use the back error beside the reload symbol.
+
+### Are my todos deleted if I tick them?
+
+Todos are only hidden. You can restore todos manually with the history or Nextcloud database. 
+
+## Why did I code this todo app?
+
+The best todo app I tested was Todoist ... but I cannot self host the service and need to expose my private information to the government ("Cloud"). So I started to code my own with Nextcloud in the background.
+
+## Why the app is named "Select20"
+
+Select the 20 % of the todos that bring the most impact for your life and work. The other 80 % of todos you can archive ... and relax. The product name name Select20 is reminder: Do not finish to 1000 of todos everyday. Instead pick the impactful ones.
 
 ## Licence
 
