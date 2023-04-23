@@ -37,7 +37,7 @@ export class SyncService {
     private alertController: AlertController,
     private storage: Storage,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   startSync() {
     if (!this.syncActive) {
@@ -189,7 +189,6 @@ export class SyncService {
         console.error('⭕ Cannot get projects', JSON.stringify(error));
         this.syncActive = false;
         if (error.status == 401 || error.status == 403) {
-         // this.presentLoginPrompt();
           this.syncStatus = 'not authorized';
         }
         if (error.status == 404) {
@@ -240,7 +239,6 @@ export class SyncService {
           );
           if (error.status == 401 || error.status == 403) {
             this.syncStatus = 'not authorized';
-           // this.presentLoginPrompt();
             this.syncActive = false;
           }
           if (error.status == 404) {
@@ -251,19 +249,19 @@ export class SyncService {
       });
     });
   }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
   finishSync() {
     this.todos = this.newTodos;
     this.relatedTodos = this.newRelatedTodos;
     console.log(
       '✅ Synced ' +
-        this.todos.length  
-        +
-        ' todos and ' +
-        this.relatedTodos.length +
-        ' subtodos in ' +
-        (performance.now() - this.timeForSync) / 1000 +
-        's'
+      this.todos.length
+      +
+      ' todos and ' +
+      this.relatedTodos.length +
+      ' subtodos in ' +
+      (performance.now() - this.timeForSync) / 1000 +
+      's'
     );
     this.todos.forEach((todo) => {
       this.relatedTodos.forEach((relatedTodo) => {
@@ -303,7 +301,7 @@ export class SyncService {
 
         if (todo.status != 'COMPLETED') {
           if (todo.icsid == 's20-dontdeleteprojects') {
-            try {          
+            try {
               this.projects = JSON.parse(todo.description);
               this.storage.set('projects', this.projects);
             } catch (error) {
@@ -335,53 +333,7 @@ export class SyncService {
 
   initateLogin(credentials) {
     this.isLoginOpen = false;
-  
-  }
 
-  async presentLoginPrompt() {
-    this.syncActive = false;
-
-    if (!this.isLoginOpen) {
-      this.isLoginOpen = true;
-
-      const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
-        header: 'Welcome to S20!',
-        message: 'Provide your credentials and allow cookies for auth.',
-        inputs: [
-          {
-            name: 'email',
-            type: 'email',
-            min: 5,
-            max: 100,
-            placeholder: 'E-Mail',
-          },
-          {
-            name: 'password',
-            type: 'password',
-            min: 12,
-            max: 200,
-            placeholder: 'Password',
-          },
-        ],
-        buttons: [
-          {
-            text: 'Register',
-            cssClass: 'secondary',
-            handler: () => {
-              this.presentRegisterPrompt();
-            },
-          },
-          {
-            text: 'Login',
-            handler: (credentials) => {
-              this.initateLogin(credentials);
-            },
-          },
-        ],
-      });
-      await alert.present();
-    }
   }
 
   async presentRegisterPrompt() {
@@ -437,7 +389,7 @@ export class SyncService {
           text: 'Submit',
           handler: (credentials) => {
             this.isLoginOpen = false;
-         
+
           },
         },
       ],
