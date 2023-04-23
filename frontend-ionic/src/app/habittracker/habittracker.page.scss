@@ -1,0 +1,27 @@
+.day{
+    height: 20px;
+    min-width: 20px;
+    border-radius: 30px;
+    background: black;
+    display: inline-block;
+    margin-right: 4px;
+    margin-top: 8px;
+    transition: 0.2s ease-in-out;
+    display: inline-block;
+    font-size: 10px;
+    padding-top: 4px
+}
+
+ion-title{
+    text-align: center;
+}
+
+.habit{
+    padding: 10px;
+    max-width: 400px;
+    text-align: center;
+    margin: 5px auto ;
+    background-color: #1d1d1d;
+    border-radius: 5px;
+    display: block;
+}

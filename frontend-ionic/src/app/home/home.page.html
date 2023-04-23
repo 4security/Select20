@@ -1,0 +1,236 @@
+<ion-header padding-top>
+  <ion-toolbar *ngIf="isPhoneView">
+    <ion-buttons slot="start">
+      <ion-button (click)="showMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title><img src="../../assets/icon/drawable-hdpi-icon.png" height="35px" />
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button *ngIf="queueLength != 0" style="margin-left: -60px">
+        <ion-icon name="cloud-offline" style="margin: 0px 10px 4px 0px"></ion-icon>
+        {{queueLength}}
+      </ion-button>
+      <ion-button (click)="refresh()" [style.background]="isSyncActive ? 'darkred' : '#1f1f1f'">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" id="background">
+  <div id="container">
+    <div id="todayPane">{{today}}</div>
+
+    <div id="buttonsPane" #buttonsPane>
+      <ion-icon class="loader" name="refresh" [style.background]="isSyncActive ? 'darkred' : '#2b2b2b'"
+        (click)="refresh()"></ion-icon>
+      <ion-icon name="eye" (click)="showHiddenProjects()"></ion-icon>
+      <ion-icon name="arrow-undo" (click)="undo()"></ion-icon>
+      <ion-icon name="search" (click)="switchSearchMode()"></ion-icon>
+      <ion-icon name="help" [routerLink]="['/explain']"></ion-icon>
+      <!--    <ion-icon name="stats-chart"  [routerLink]="['/habittracker']"></ion-icon>  -->
+      <ion-icon name="log-out" (click)="logout()" id="open-modal"></ion-icon>
+    </div>
+
+    <div id="headingPane" (click)="showMenu()">{{heading}}</div>
+
+    <div id="newTodoPane" *ngIf="!isFABShown">
+      <div id="supertask" *ngIf="isInSerachMode">
+        <div id="superTodoText">Start to search</div>
+        <div id="closeSuperTask" (click)="switchSearchMode()">
+          <ion-icon name="close"></ion-icon>
+        </div>
+      </div>
+      <div id="supertask" *ngIf="superTodoText != ''">
+        <div id="superTodoText">{{superTodoText }}</div>
+        <div id="closeSuperTask" (click)="leaveSubTaskMode()">
+          <ion-icon name="close"></ion-icon>
+        </div>
+      </div>
+
+      <div>
+        <div id="newTodoInputClose">
+          <ion-icon name="close" (click)="showNewInput()"></ion-icon>
+        </div>
+        <div id="newTodoInputWrap">
+          <input id="newTodoInput" [(ngModel)]="inputNewTodo" autocapitalize="none" (keyup.enter)="createNewTodo()"
+            #taskinput (keydown.control.ArrowDown)="switchSearchMode()" (ngModelChange)="search()" />
+        </div>
+        <div id="newTodoInputSubmit" (click)="createNewTodo()">
+          <ion-icon name="send"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div id="projectsPane" #projectPane>
+      <div *ngFor="let project of projects">
+        <div class="project" [style.margin-left]="project.intendation == 1 ? '20px': '0px'"
+          (click)="showProjectTodos(project)" *ngIf="project.visible">
+          {{project.title}}
+          <div id="edit" (click)="updateProject(project)">
+            <div class="editicons">
+              <ion-icon name="create"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="project" id="addProject" (click)="addProject()">
+        <ion-icon name="add-outline"></ion-icon>
+      </div>
+    </div>
+
+    <div id="mainPane" [style.top]="isInSerachMode || superTodoText != '' ? '232px' : '192px'">
+      <div>
+        <div *ngFor="let todo of todos">
+          <div class="todo" *ngIf="(todo.isVisible)">
+            <div class="tickboxcage" (click)="toggleTodo(todo)">
+              <div class="tickbox" [style.border-color]="getColor(todo)"></div>
+            </div>
+            <div class="todotext">
+              <div class="title" contenteditable="true" autocapitalize="none"
+                (keyup.enter)="changeSummary($event, todo)">
+                {{todo.title}}
+              </div>
+              <a *ngIf="getURL(todo.title) != 'none' " [href]="getURL(todo.title)" target="_blank">
+                <ion-icon name="link" class="subtaskbutton"></ion-icon>
+              </a>
+              <ion-icon name="add-circle" class="subtaskbutton" (click)="addSubtask(todo)">
+              </ion-icon>
+
+              <br />
+
+              <div class="date chip" *ngIf="todo.due != ''" (click)="deleteDueDate(todo)"
+                [style.color]="todo.isOverdue ? '#ff5b5b' : 'white'">
+                <span *ngIf="todo.rrule != ''">
+                  <ion-icon name="repeat"></ion-icon>
+                </span>
+                {{formatDate(todo)}}
+              </div>
+
+              <div class="chip" *ngIf="todo.isChecklist">
+                <ion-icon name="checkbox"></ion-icon> Checklist
+              </div>
+              <div class="projectchip chip" *ngIf="todo.project.url != currentProject.url">
+                {{todo.project.title}}
+              </div>
+              <div class="chip" *ngIf="todo.duration != 30">
+                <ion-icon name="hourglass"></ion-icon>
+                {{todo.duration}}m
+              </div>
+            </div>
+
+            <br />
+          </div>
+
+          <div *ngFor="let relatedTodo of todo.subs">
+            <div class="todo relatedTodo" *ngIf="relatedTodo.isVisible && todo.isVisible">
+              <div class="tickboxcage" (click)="toggleTodo(relatedTodo)">
+                <div class="tickbox" [style.border-color]="getColor(relatedTodo)"></div>
+              </div>
+              <div class="todotext">
+                <div class="title" contenteditable="true" (keyup.enter)="changeSummary($event, relatedTodo)">
+                  {{relatedTodo.title}}
+                </div>
+                <a *ngIf="getURL(todo.title) != 'none' " [href]="getURL(relatedTodo.title)" target="_blank">
+                  <ion-icon name="link" class="subtaskbutton"></ion-icon>
+                </a>
+                <br />
+                <div class="date chip" *ngIf="relatedTodo.due != ''" (click)="deleteDueDate(relatedTodo)"
+                  [style.color]="relatedTodo.isOverdue ? '#ff5b5b' : 'white'">
+                  <span *ngIf="relatedTodo.rrule != ''">
+                    <ion-icon name="repeat"></ion-icon>
+                  </span>
+                  {{formatDate(relatedTodo)}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="isFABShown" (click)="showNewInput()">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-modal trigger="open-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Welcome</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="arcord">
+          <h2>Login</h2>
+
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emaillogin" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordlogin" placeholder="Password" />
+          <ion-button (click)="login()">Login</ion-button>
+        </div>
+        <div class="arcord">
+          <h2>Demo Mode</h2>
+
+          <p>
+            Demo Mode automatically reset all todos. This only for testing the
+            sofware. If you want to permently use Select20 choose Register -
+            Free Acount
+          </p>
+          <ion-button (click)="startDemoMode()">Start Demo Mode</ion-button>
+        </div>
+        <!--     <div class="arcord">
+          <h2>Register - Free Account</h2>
+
+          <ion-input
+            aria-label="Name"
+            type="text"
+            [(ngModel)]="nameregisterfree"
+            placeholder="Name"
+          />
+          <ion-input
+            aria-label="Email"
+            type="email"
+            [(ngModel)]="emailregisterfree"
+            placeholder="E-Mail"
+          />
+          <ion-input
+            aria-label="Password"
+            type="password"
+            [(ngModel)]="passwordregisterfree"
+            placeholder="Password (12+ chars, use Password Manager)"
+          />
+          <ion-button (click)="registerFree()"
+            >Register for Free Account</ion-button
+          >
+        </div>-->
+        <div class="arcord">
+          <h2>Register - Selfhosted</h2>
+
+          <p>You can only this if you setup Select20 with the provided docker compose.</p>
+          <ion-input aria-label="Name" type="text" [(ngModel)]="nameregisterselfhosted" placeholder="Name" />
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emailregisterselfhosted" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordregisterselfhosted"
+            placeholder="Password (12+ chars, use Password Manager)" />
+          <p>
+            The Nextcloud-URL have the format
+            https://[host]/remote.php/dav/calendars/[user]/. The Nextcloud
+            API-Key is available in "Administration Settings > Security > Create
+            new app password.
+          </p>
+          <ion-input aria-label="Nextcloud-URL" type="text" [(ngModel)]="nextcloudurl" placeholder="Nextcloud-URL" />
+          <ion-input aria-label="Nextcloud-API-Key" type="text" [(ngModel)]="nextcloudapi"
+            placeholder="Nextcloud-API-Key" />
+          <ion-button (click)="registerSelfhosted()">Setup Selfhosted Account</ion-button>
+        </div>
+        <br /><br />
+        <p>
+          <a href="https://lippke.li/impressum/">Impressum & Datenschutzerklärung / Impress & Data Protection</a>
+        </p>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

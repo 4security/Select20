@@ -1,0 +1,32 @@
+ion-title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0 90px 1px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+ion-list {
+    max-width: 500px;
+    border-radius: 5px;
+    margin: 2vh auto;
+    text-align: center;
+}
+
+
+ion-button:first-child {
+    position: relative;
+
+    width: 300px;
+    left: 50%;
+    margin-left: -150px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+}
+
+ion-button ion-icon {
+    margin-right: 10px;
+}

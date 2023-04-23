@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  app:
+    image: register.lan/s20laravel:27
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - laravels20:/var/www
+    networks:
+      - mysql_sec_network
+    ports:
+      - 60005:8000
+      
+volumes:
+  laravels20:
+    external: false
+    
+networks:
+  mysql_sec_network:
+    external: true
+    name: mysql_sec_network

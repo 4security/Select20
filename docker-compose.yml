@@ -1,0 +1,67 @@
+version: "3.9"
+services:
+
+  select20_frontend_ionic:
+    build: frontend-ionic/
+    container_name: select20_frontend_ionic
+    restart: always
+    working_dir: /var/www
+    depends_on:
+      - select20_backend_laravel
+    ports:
+      - 8081:80
+
+  select20_backend_laravel:
+    build: backend-laravel/
+    container_name: select20_backend_laravel
+    restart: always
+    working_dir: /var/www
+    env_file:
+      - backend-laravel/.env
+    depends_on:
+      - select20_mariadb
+    volumes:
+      - select20_laravel_storage:/var/www
+    ports:
+      - 8001:8001
+    networks:
+      - select20_mysql_sec_net
+
+  select20_mariadb:
+    image: mariadb:latest
+    container_name: select20_mariadb
+    restart: always
+    volumes:
+      - select20_mariadb_storage:/config/databases/
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+      - backend-laravel/.env
+    environment:
+        MYSQL_TCP_PORT: 3307
+        MYSQL_UNIX_PORT: 3307=value
+    ports:
+      - 3307:3307
+    networks:
+      - select20_mysql_sec_net
+
+  select20_phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: select20_phpmyadmin
+    ports:
+      - 8008:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=select20_mariadb
+    networks:
+      - select20_mysql_sec_net
+
+networks:
+  select20_mysql_sec_net:
+    name: select20_mysql_sec_net
+
+volumes:
+  select20_laravel_storage:
+  select20_mariadb_storage:
+    
+
+

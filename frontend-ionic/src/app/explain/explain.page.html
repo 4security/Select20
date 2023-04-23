@@ -1,0 +1,92 @@
+<ion-header [translucent]="true"> </ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-button [routerLink]="['/home']"
+    ><ion-icon name="arrow-back"></ion-icon> Go back
+  </ion-button>
+  <h2>Typing</h2>
+  <div class="row">
+    <div class="command">p1,p2,p3,p4</div>
+    <div class="explain">Priority, p1 is the highest - colored red circle</div>
+  </div>
+  <div class="row">
+    <div class="command">#projectname</div>
+    <div class="explain">
+      Automatically moves the todo in the correct project
+    </div>
+  </div>
+  <div class="row">
+    <div class="command">30.12.2023</div>
+    <div class="explain">Full date with day.month.year - separted by dots</div>
+  </div>
+  <div class="row">
+    <div class="command">30.12</div>
+    <div class="explain">
+      Short date with day.month the software assumes the current year
+    </div>
+  </div>
+  <div class="row">
+    <div class="command">90m</div>
+    <div class="explain">
+      Todos can be sheduled with duration. Need for start due date.
+    </div>
+  </div>
+  <div class="row">
+    <div class="command">every mon 19:00</div>
+    <div class="explain">
+      Add recurring rule with time. Weekly rhythms are possible.
+    </div>
+  </div>
+  <div class="row">
+    <div class="command">every 4 sun 10:00</div>
+    <div class="explain">Recurring rule on every X weeks</div>
+  </div>
+  <div class="row">
+    <div class="command">* Shopping</div>
+    <div class="explain">
+      Star --> Checklist with subtodos that will restore on reload.
+    </div>
+  </div>
+  <div class="row">
+    <div class="command">https://example.com</div>
+    <div class="explain">
+      Add links and a short link is created (hover needed)
+    </div>
+  </div>
+
+  <h2>FAQ</h2>
+  <div class="row">
+    <h3>How to shift a todo to other project?</h3>
+    <p>Edit the todo and add #projectname at the end and hit enter.</p>
+  </div>
+  <div class="row">
+    <h3>How can add subtodos?</h3>
+    <p>Click on the add symbol during hovering a todo.</p>
+  </div>
+  <div class="row">
+    <h3>How can search todos?</h3>
+    <p>
+      Click on the search icon on the menu or put your cursor inside the input
+      and press Strg+ArrowDown
+    </p>
+  </div>
+  <div class="row">
+    <h3>How can I see hidden projects again?</h3>
+    <p>Click on the view icon</p>
+  </div>
+  <div class="row">
+    <h3>How to change the calendar of project?</h3>
+    <p>Edit the project. Select the calendar in the dropdown and safe.</p>
+  </div>
+  <div class="row">
+    <h3>I want to restore the last todo / undo a todo</h3>
+    <p>Use the back error beside the reload symbol.</p>
+  </div>
+  <div class="row">
+    <h3>Are my todos deleted if I tick them?</h3>
+    <p>
+      Todos are only hidden. You can restore todos manually with the history or
+      Nextcloud database.
+    </p>
+  </div>
+</ion-content>

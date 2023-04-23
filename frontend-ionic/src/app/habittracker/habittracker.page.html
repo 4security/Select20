@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Habits</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div id="habittrackermatrix">
+    <div class="habit" *ngFor="let habit of habits">
+      <div class="summary">{{habit.summary}} ({{habit.prio}})</div>
+      <div class="squreline" >
+        <div class="day" *ngFor="let date of habit.dates"  [style.background]="date.status == 'done' ? 'darkred' : '#2b2b2b'">{{date.weekday}}</div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

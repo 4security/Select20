@@ -1,0 +1,12 @@
+pipeline {
+   environment {
+    registry = "s20laravel"
+    registryCredential = '977ae189-bf38-4b7c-a7c4-ccc5f6111858'
+    dockerImage = ''
+  }
+  agent {
+      docker { image 'bitnami/laravel:latest' }
+  }
+  stages {
+    
+}
