@@ -6,10 +6,14 @@
 
 ## Test it now!
 
+Online Demo: Go to https://s20.lippke.li/ and select Demo mode
+
+OR
+
 1. Clone the git repo
 
 ```sh
-git clone ...
+git clone https://github.com/liquididea/Select20.git
 ```
 
 2. Change the passwords in the backend-laravel/.env.example --> .env file
@@ -28,7 +32,7 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 
 6. Open http://localhost:8081
 
-Quick Links: Developer Docu - Contributing - Code of Conduct
+Quick Links: [Developer Docu](https://github.com/liquididea/Select20/blob/main/DEVELOPER_DOCU.md) - [Contributing](https://github.com/liquididea/Select20/blob/main/CONTRIBUTING.md) - [Code of Conduct](https://github.com/liquididea/Select20/blob/main/CODE_OF_CONDUCT.md)
 
 ## Why should I use Select20?
 

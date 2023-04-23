@@ -164,10 +164,15 @@ ionic build --prod && npx cap copy && npx cap sync
 
 # Frontend
 
-## Pages
+## Central Ideas
 
-- Home:
-- Project
+- **Sync**: Uses the IndexDB to store todos offline. The todos are instantly loaded from Ionic Storage (IndexDB) on page load. Then the sync starts and fetches the data from the nextcloud instance and replaces the todos on the fly. During Offline Mode, all todos are saved in queue (QueueItem) and they are synced when the device gets online again. 
+- **Parsing of Nextcloud todos**: The app recives a XML from the instances. It filters the old ones and parses each todo a new json format (todo.ts)
+- **Resolving nextcloud API**: The app submits and parses nextcloud todos in parallel to reduce the load time. The sync services changes the status from `running -> resolved` if all todos are parsed. The sync uses polling between the home page and the sync service. Please, provide a better way of code if you have a better idea. 
+- **Recurring todos**: the rrule.service.ts manages the recurring rules. The ical format is limited so I added to the description the appendix `;NEXTEVENT=`. The next date is calculated based on the time it is done. Look in the docu date-fns to understand it better.
+- **Regex**: The projects uses a bunch of regeular expressions in regex.service.ts to parse the todos. Add more tests if you want to change or add new functions and expressions. Currently the software accepts dates in the date format date.month.year or date.month
+- **Checklist**: The subtodos are only hiding viually if you start a todo with `*`. There is no interaction with the backend. On the next refresh the checklist is reseted.
+
 
 # Known Issues / Open Tasks
 
