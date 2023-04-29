@@ -20,6 +20,7 @@ pipeline {
                 stage('Restore Backend') {
                     steps {
                         dir('backend-laravel') {
+                            sh 'ls'
                             sh 'php composer install  --ignore-platform-reqs'
                             sh 'cp .env.example .env'
                             sh 'php artisan key:generate'
