@@ -19,26 +19,32 @@ pipeline {
             stages {
                 stage('Restore Backend') {
                     steps {
-                        sh 'cd backend-laravel && composer clearcache'
-                        sh 'cd backend-laravel && rm -rf vendor/*'
-                        sh 'cd backend-laravel && composer install  --ignore-platform-reqs'
-                        sh 'cd backend-laravel && cp .env.example .env'
-                        sh 'cd backend-laravel && php artisan key:generate'
-                        sh 'cd backend-laravel && php artisan jwt:secret'
+                        dir('backend-laravel') {
+                            sh 'composer clearcache'
+                            sh 'rm -rf vendor/*'
+                            sh 'composer install  --ignore-platform-reqs'
+                            sh 'cp .env.example .env'
+                            sh 'php artisan key:generate'
+                            sh 'php artisan jwt:secret'
+                        }
                     }
                 }
                 stage('Build Docker') {
                     steps {
-                        script {
-                            dockerImage = docker.build registry + ':nightly'
+                        dir('backend-laravel') {
+                            script {
+                                dockerImage = docker.build registry + ':nightly'
+                            }
                         }
                     }
                 }
                 stage('Push') {
                     steps {
-                        script {
-                            docker.withRegistry( 'https://register.lan', registryCredential ) {
-                                dockerImage.push()
+                        dir('backend-laravel') {
+                            script {
+                                docker.withRegistry( 'https://register.lan', registryCredential ) {
+                                    dockerImage.push()
+                                }
                             }
                         }
                     }
@@ -55,40 +61,45 @@ pipeline {
             }
             stages {
                 stage('Restore Frontend') {
-                    steps {
-                        sh '''
-                            # change script mode from debugging to command logging
-                            set +x -v
-                            cd frontend-ionic/
-                            npm install -f
-                        '''
+                    dir('frontend-ionic') {
+                        steps {
+                            sh 'npm install -f'
+                        }
                     }
                 }
 
                 stage('Build NPM') {
-                    steps {
-                        sh 'npm install -g @ionic/cli && ionic build --prod'
+                    dir('frontend-ionic') {
+                        steps {
+                            sh 'npm install -g @ionic/cli && ionic build --prod'
+                        }
                     }
                 }
 
                 stage('Test') {
-                    steps {
-                        sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
+                    dir('frontend-ionic') {
+                        steps {
+                            sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
+                        }
                     }
                 }
 
                 stage('Build Docker') {
                     steps {
-                        script {
-                            dockerImage = docker.build registry + ':nightly'
+                        dir('frontend-ionic') {
+                            script {
+                                dockerImage = docker.build registry + ':nightly'
+                            }
                         }
                     }
                 }
                 stage('Push') {
                     steps {
                         script {
-                            docker.withRegistry( 'https://register.lan', registryCredential ) {
-                                dockerImage.push()
+                            dir('frontend-ionic') {
+                                docker.withRegistry( 'https://register.lan', registryCredential ) {
+                                    dockerImage.push()
+                                }
                             }
                         }
                     }
