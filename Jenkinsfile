@@ -19,17 +19,12 @@ pipeline {
             stages {
                 stage('Restore Backend') {
                     steps {
-                        sh '''
-                            # change script mode from debugging to command logging
-                            set +x -v
-                            cd backend-laravel/
-                            composer clearcache
-                           '''
-                        sh 'rm -rf vendor/*'
-                        sh 'composer install  --ignore-platform-reqs'
-                        sh 'cp .env.example .env'
-                        sh 'php artisan key:generate'
-                        sh 'php artisan jwt:secret'
+                        sh 'cd backend-laravel && composer clearcache'
+                        sh 'cd backend-laravel && rm -rf vendor/*'
+                        sh 'cd backend-laravel && composer install  --ignore-platform-reqs'
+                        sh 'cd backend-laravel && cp .env.example .env'
+                        sh 'cd backend-laravel && php artisan key:generate'
+                        sh 'cd backend-laravel && php artisan jwt:secret'
                     }
                 }
                 stage('Build Docker') {
