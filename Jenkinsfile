@@ -20,9 +20,7 @@ pipeline {
                 stage('Restore Backend') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'composer clearcache'
-                            sh 'rm -rf vendor/*'
-                            sh 'composer install  --ignore-platform-reqs'
+                            sh 'php composer install  --ignore-platform-reqs'
                             sh 'cp .env.example .env'
                             sh 'php artisan key:generate'
                             sh 'php artisan jwt:secret'
@@ -42,7 +40,7 @@ pipeline {
                     steps {
                         dir('backend-laravel') {
                             script {
-                                docker.withRegistry( 'https://register.lan', registryCredential ) {
+                                docker.withRegistry('https://register.lan', registryCredential) {
                                     dockerImage.push()
                                 }
                             }
@@ -97,7 +95,7 @@ pipeline {
                     steps {
                         script {
                             dir('frontend-ionic') {
-                                docker.withRegistry( 'https://register.lan', registryCredential ) {
+                                docker.withRegistry('https://register.lan', registryCredential) {
                                     dockerImage.push()
                                 }
                             }
