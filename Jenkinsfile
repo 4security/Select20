@@ -61,27 +61,27 @@ pipeline {
             }
             stages {
                 stage('Restore Frontend') {
-                    dir('frontend-ionic') {
-                        steps {
+                    steps {
+                        dir('frontend-ionic') {
                             sh 'npm install -f'
                         }
                     }
                 }
 
                 stage('Build NPM') {
-                    dir('frontend-ionic') {
                         steps {
-                            sh 'npm install -g @ionic/cli && ionic build --prod'
+                            dir('frontend-ionic') {
+                                sh 'npm install -g @ionic/cli && ionic build --prod'
+                            }
                         }
-                    }
                 }
 
                 stage('Test') {
-                    dir('frontend-ionic') {
                         steps {
-                            sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
+                            dir('frontend-ionic') {
+                                sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
+                            }
                         }
-                    }
                 }
 
                 stage('Build Docker') {
