@@ -9,7 +9,6 @@ pipeline {
 
     agent {
         docker {
-            label 'docker'
             image 'busybox'
         }
     }
