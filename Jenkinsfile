@@ -23,9 +23,6 @@ pipeline {
             stages {
                 stage('Restore Backend') {
                     steps {
-                        script {
-                            System.setProperty('org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL', '3800')
-                        }
                         dir('backend-laravel') {
                             sh 'ls'
                             sh 'php composer install  --ignore-platform-reqs'
