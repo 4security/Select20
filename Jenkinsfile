@@ -63,7 +63,7 @@ pipeline {
                 stage('Restore Frontend') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm install -f'
+                            sh "export PUPPETEER_SKIP_DOWNLOAD='true' && npm install"
                         }
                     }
                 }
