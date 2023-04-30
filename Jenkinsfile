@@ -56,32 +56,32 @@ pipeline {
         stage('Frontend') {
             agent {
                     docker {
-                            image 'codeceptjs/codeceptjs:latest'
+                        image 'satantime/puppeteer-node:latest'
                     }
             }
             stages {
                 stage('Restore Frontend') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm config set puppeteer_download_host=https://npm.taobao.org/mirrors && npm i puppeteer && npm install'
+                            sh 'npm install -f'
                         }
                     }
                 }
 
                 stage('Build NPM') {
-                        steps {
-                            dir('frontend-ionic') {
-                                sh 'npm install -g @ionic/cli && ionic build --prod'
-                            }
+                    steps {
+                        dir('frontend-ionic') {
+                            sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
                         }
+                    }
                 }
 
                 stage('Test') {
-                        steps {
-                            dir('frontend-ionic') {
-                                sh 'npm install -g @angular/cli && ng test'
-                            }
+                    steps {
+                        dir('frontend-ionic') {
+                            sh 'npm install -g @angular/cli && ng test'
                         }
+                    }
                 }
 
                 stage('Build Docker') {
