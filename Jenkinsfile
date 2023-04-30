@@ -3,8 +3,6 @@ pipeline {
         registry = 's20'
         registryCredential = '977ae189-bf38-4b7c-a7c4-ccc5f6111858'
         dockerImage = ''
-        ANDROID_HOME = '/usr/local/android-sdk-linux'
-        PATH = "/usr/local/android-sdk-linux/platform-tools:${PATH}"
     }
 
     agent {
@@ -59,7 +57,6 @@ pipeline {
             agent {
                     docker {
                             image 'satantime/puppeteer-node:latest'
-                            label 'node'
                     }
             }
             stages {
