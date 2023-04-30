@@ -7,7 +7,12 @@ pipeline {
         PATH = "/usr/local/android-sdk-linux/platform-tools:${PATH}"
     }
 
-    agent none
+    agent {
+        docker {
+            label 'docker'
+            image 'busybox'
+        }
+    }
 
     stages {
         stage('Backend') {
@@ -19,6 +24,9 @@ pipeline {
             stages {
                 stage('Restore Backend') {
                     steps {
+                        script {
+                            System.setProperty('org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL', '3800')
+                        }
                         dir('backend-laravel') {
                             sh 'ls'
                             sh 'php composer install  --ignore-platform-reqs'
