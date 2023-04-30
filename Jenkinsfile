@@ -71,7 +71,7 @@ pipeline {
                 stage('Build NPM') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm install -g @angular/cli && npm i -D puppeteer --unsafe-perms && npm install && ng test'
+                            sh 'npm install -g @angular/cli && npm i -D puppeteer --unsafe-perms && npm install && node node_modules/puppeteer/install.js && ng test'
                         }
                     }
                 }
