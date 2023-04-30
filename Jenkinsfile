@@ -63,7 +63,7 @@ pipeline {
                 stage('Restore Frontend') {
                     steps {
                         dir('frontend-ionic') {
-                            sh "export PUPPETEER_SKIP_DOWNLOAD='true' && npm install"
+                            sh 'npm config set puppeteer_download_host=https://npm.taobao.org/mirrors && npm i puppeteer && npm install'
                         }
                     }
                 }
@@ -71,7 +71,7 @@ pipeline {
                 stage('Build NPM') {
                         steps {
                             dir('frontend-ionic') {
-                                sh 'npm install -g @ionic/cli && npm install && node node_modules/puppeteer/install.js && ionic build --prod'
+                                sh 'npm install -g @ionic/cli && ionic build --prod'
                             }
                         }
                 }
