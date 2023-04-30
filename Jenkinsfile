@@ -36,7 +36,7 @@ pipeline {
                     steps {
                         dir('backend-laravel') {
                             script {
-                                dockerImage = docker.build registry + ':nightly'
+                                dockerImage = docker.build 's20api:nightly'
                             }
                         }
                     }
@@ -91,7 +91,7 @@ pipeline {
                     steps {
                         dir('frontend-ionic') {
                             script {
-                                dockerImage = docker.build registry + ':nightly'
+                                dockerImage = docker.build 's20:nightly'
                             }
                         }
                     }
