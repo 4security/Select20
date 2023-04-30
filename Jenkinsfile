@@ -56,7 +56,7 @@ pipeline {
         stage('Frontend') {
             agent {
                     docker {
-                            image 'satantime/puppeteer-node:latest'
+                            image 'codeceptjs/codeceptjs:latest'
                     }
             }
             stages {
