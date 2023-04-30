@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { RegexService } from './regex.service';
 import { isSameDay, parseISO } from 'date-fns';
 import { RruleService } from './rrule.service';
+import { defaultCurrentProject } from '../config';
 
 describe('RruleService', () => {
   let service: RruleService;
@@ -38,7 +39,7 @@ describe('RruleService', () => {
       rrule: '',
       duration: 30,
       related: '',
-      project: 'myproject',
+      project: defaultCurrentProject,
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
@@ -67,7 +68,7 @@ describe('RruleService', () => {
       rrule: '',
       duration: 30,
       related: '',
-      project: 'myproject',
+      project: defaultCurrentProject,
       isVisible: true,
       isChecklist: false,
       isOverdue: false,

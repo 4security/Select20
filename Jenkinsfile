@@ -79,7 +79,7 @@ pipeline {
                 stage('Test') {
                         steps {
                             dir('frontend-ionic') {
-                                sh 'npm install -g @angular/cli && npm i -D puppeteer && npm install && node node_modules/puppeteer/install.js && ng test'
+                                sh 'npm install -g @angular/cli && npm install && node node_modules/puppeteer/install.js && ng test'
                             }
                         }
                 }
