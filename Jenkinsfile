@@ -71,7 +71,7 @@ pipeline {
                 stage('Build NPM') {
                         steps {
                             dir('frontend-ionic') {
-                                sh 'npm install -g @ionic/cli && ionic build --prod'
+                                sh 'npm install -g @ionic/cli && npm install && node node_modules/puppeteer/install.js && ionic build --prod'
                             }
                         }
                 }
