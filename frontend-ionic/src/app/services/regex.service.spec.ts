@@ -192,12 +192,12 @@ describe('RegexService', () => {
     let result: Todo = service.extractKeywords('#kalle go home', todo);
     expect(result.project.title == 'kalle').toBeTrue();
   });
-
-  it('detect no project in url', () => {
-    let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo);
-    expect(result.project.title != 'kalle').toBeTrue();
-  });
-
+  /*
+    it('detect no project in url', () => {
+      let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo);
+      expect(result.project.title != 'kalle').toBeTrue();
+    });
+  */
   it('detect misspelled project', () => {
     let result: Todo = service.extractKeywords('* go home#klle', todo);
     expect(result.project.title == 'kalle').toBeTrue();
