@@ -19,19 +19,15 @@ pipeline {
                 }
             }
             stages {
-                stage('Restore Backend') {
+                stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'ls'
                             sh 'php composer install  --ignore-platform-reqs'
-                            sh 'cp .env.example .env'
-                            sh 'php artisan key:generate'
-                            sh 'php artisan jwt:secret'
                         }
                     }
                 }
 
-                stage('Build Docker') {
+                stage('Build Laravel Docker') {
                     steps {
                         dir('backend-laravel') {
                             script {
@@ -41,7 +37,7 @@ pipeline {
                     }
                 }
 
-                stage('Push') {
+                stage('Push Laravel Docker') {
                     steps {
                         dir('backend-laravel') {
                             script {
@@ -57,37 +53,33 @@ pipeline {
 
         stage('Frontend') {
             agent {
-                    docker {
-                        image 'satantime/puppeteer-node:19-buster-slim'
-                    }
+                docker {
+                    image 'satantime/puppeteer-node:19-buster-slim'
+                }
             }
 
             stages {
-                stage('Restore Frontend') {
+                stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
                             sh 'npm install -f'
+                            sh 'export PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors/'
+                            sh 'npm install -g @angular/cli'
+                            sh 'npm i puppeteer --unsafe-perms -f'
+                            sh 'node node_modules/puppeteer/install.js'
                         }
                     }
                 }
 
-                stage('Build NPM') {
+                stage('Run Tests') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'export PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors/ && npm install -g @angular/cli && npm i puppeteer --unsafe-perms -f && node node_modules/puppeteer/install.js && ng test'
+                            sh 'ng test'
                         }
                     }
                 }
 
-                stage('Test') {
-                    steps {
-                        dir('frontend-ionic') {
-                            sh 'npm install -g @angular/cli && ng test'
-                        }
-                    }
-                }
-
-                stage('Build Docker') {
+                stage('Build Ionic Docker') {
                     steps {
                         dir('frontend-ionic') {
                             script {
@@ -97,7 +89,7 @@ pipeline {
                     }
                 }
 
-                stage('Push') {
+                stage('Push Ionic Docker') {
                     steps {
                         script {
                             dir('frontend-ionic') {
