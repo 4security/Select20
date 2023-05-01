@@ -30,6 +30,7 @@ pipeline {
                         }
                     }
                 }
+
                 stage('Build Docker') {
                     steps {
                         dir('backend-laravel') {
@@ -39,6 +40,7 @@ pipeline {
                         }
                     }
                 }
+
                 stage('Push') {
                     steps {
                         dir('backend-laravel') {
@@ -56,9 +58,10 @@ pipeline {
         stage('Frontend') {
             agent {
                     docker {
-                        image 'satantime/puppeteer-node:20-buster-slim'
+                        image 'satantime/puppeteer-node:14-slim'
                     }
             }
+
             stages {
                 stage('Restore Frontend') {
                     steps {
@@ -93,6 +96,7 @@ pipeline {
                         }
                     }
                 }
+
                 stage('Push') {
                     steps {
                         script {
