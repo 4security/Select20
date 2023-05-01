@@ -77,6 +77,14 @@ pipeline {
                     }
                 }
 
+                stage('Modify Env') {
+                    steps {
+                        dir('frontend-ionic') {
+                            sh 'cp src/app/config.prod.ts src/app/config.ts'
+                        }
+                    }
+                }
+
                 stage('Build Ionic Docker') {
                     steps {
                         dir('frontend-ionic') {
