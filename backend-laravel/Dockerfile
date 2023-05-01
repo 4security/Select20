@@ -52,4 +52,4 @@ RUN composer dump-autoload --working-dir="/var/www"
 
 EXPOSE 80
 
-CMD php artisan optimize &&  php artisan route:clear &&  php artisan route:cache &&  php artisan config:clear &&  php artisan config:cache && php artisan serve --host=0.0.0.0 --port=8001
+#CMD php artisan optimize &&  php artisan route:clear &&  php artisan route:cache &&  php artisan config:clear &&  php artisan config:cache && php artisan serve --host=0.0.0.0 --port=8001
