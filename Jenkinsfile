@@ -64,7 +64,7 @@ pipeline {
                         dir('frontend-ionic') {
                             sh 'npm install -f'
                             sh 'npm install -g @angular/cli'
-                            sh 'export PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors/ && npm i puppeteer --unsafe-perms -f && node node_modules/puppeteer/install.js'
+                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.js'
                         }
                     }
                 }
