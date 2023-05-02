@@ -28,7 +28,7 @@ services:
       - select20_mysql_sec_net
 
   select20_mariadb:
-    image: mariadb:latest
+    image: mariadb:10.11
     container_name: select20_mariadb
     restart: always
     volumes:
@@ -45,7 +45,7 @@ services:
       - select20_mysql_sec_net
 
   select20_phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2
     container_name: select20_phpmyadmin
     ports:
       - 8008:80

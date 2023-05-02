@@ -15,7 +15,7 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'bitnami/laravel:latest'
+                    image 'bitnami/laravel:10'
                 }
             }
             stages {
