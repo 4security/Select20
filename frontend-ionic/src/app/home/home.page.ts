@@ -547,7 +547,7 @@ export class HomePage implements OnInit {
             }
             break;
           default:
-            if (this.currentProject.url == todo.project.url.replace("/", "") && todo.status != 'COMPLETED') {
+            if (this.currentProject.url == todo.project.url && todo.status != 'COMPLETED') {
               todo.isVisible = true;
             } else {
               todo.isVisible = false;
