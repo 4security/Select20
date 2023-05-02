@@ -1,9 +1,9 @@
-FROM node:16.20.0-alpine3.17 AS build
+FROM node:20-slim AS build
 WORKDIR /app
 COPY package-lock.json .
 COPY package.json .
 ENV PUPPETEER_SKIP_DOWNLOAD='true'
-RUN npm install npm@latest -g
+RUN npm install npm@9.5.0 -g
 RUN npm install @angular/cli -g
 RUN npm install @ionic/cli -g
 RUN npm install -f 

@@ -7,6 +7,7 @@ import { addDays, isFriday, isSaturday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { RruleService } from './rrule.service';
 import { Project } from '../models/project';
+import { defaultCurrentProject } from '../config';
 
 describe('ParserService', () => {
   let service: ParserService;
@@ -41,7 +42,7 @@ describe('ParserService', () => {
       rrule: '',
       duration: 30,
       related: '',
-      project: 'myproject',
+      project: defaultCurrentProject,
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
@@ -70,7 +71,7 @@ describe('ParserService', () => {
       rrule: '',
       duration: 30,
       related: '',
-      project: 'myproject',
+      project: defaultCurrentProject,
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
