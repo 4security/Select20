@@ -22,7 +22,6 @@ pipeline {
                 stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'rm .env'
                             sh 'php composer install  --ignore-platform-reqs'
                         }
                     }
