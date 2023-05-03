@@ -62,14 +62,7 @@ ion-title {
     color: #1d1d1d;
     vertical-align: middle;
     font-size: 25px;
-    margin-left: 10px;
     float: right;
-}
-
-a .subtaskbutton {
-
-    margin-top: -56px;
-
 }
 
 .todo:hover .subtaskbutton {
@@ -296,14 +289,15 @@ ion-title img {
     border-radius: 5px;
 }
 
-.arcord{
+.arcord {
     background-color: #191919;
     text-align: center;
     padding: 10px 0.8vw;
-        border-radius: 5px;
-        margin-bottom: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
-.arcord ion-button{
+
+.arcord ion-button {
     margin-top: 20px;
 }
 
@@ -312,9 +306,9 @@ ion-title img {
     display: none;
 }
 
-        #addProject {
-            text-align: center;
-        }
+#addProject {
+    text-align: center;
+}
 
 @media only screen and (max-width: 1100px) {
 
@@ -369,7 +363,7 @@ ion-title img {
         margin-right: 14px;
         margin-top: -34px;
         font-size: 17px;
-        
+
     }
 
     #mainPane {
@@ -407,7 +401,7 @@ ion-title img {
         width: 95vw;
         left: -100vw;
         z-index: 10;
-        
+
     }
 
     #buttonsPane {
