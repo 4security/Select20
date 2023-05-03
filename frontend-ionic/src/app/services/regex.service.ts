@@ -16,12 +16,15 @@ import {
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
 import { Storage } from '@ionic/storage';
+import { Project } from '../models/project';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegexService {
   projectTitles: string[] = [];
+  projects: Project[] = []
 
   constructor(
     private messageService: MessageService,
@@ -30,6 +33,9 @@ export class RegexService {
     this.storage.create();
     this.storage?.get('projectTitles').then((projectTitles: string[]) => {
       this.projectTitles = projectTitles;
+      this.storage?.get('projects').then((projects: Project[]) => {
+        this.projects = projects;
+      });
     });
 
   }
@@ -106,12 +112,12 @@ export class RegexService {
       let regexProject: RegExp = /#([A-Za-z]+)/g;
       let rawProject: RegExpExecArray = regexProject.exec(summary);
       let project = rawProject === null ? todo.project : rawProject[1];
-      let resultSearch: string = this.fuzzySearchInArray(project)[0];
+      let resultSearch: string = this.fuzzySearchInArray(project, this.projectTitles)[0];
 
       if (resultSearch == null || resultSearch == undefined) {
         todo.project.title = 'Inbox';
       } else {
-        todo.project.title = resultSearch;
+        todo.project = this.projects.find(project => project.title === resultSearch);;
       }
       summary = summary.replace(/\s?#[A-Za-z]+/i, '');
     }
