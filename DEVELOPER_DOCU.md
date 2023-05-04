@@ -144,6 +144,9 @@ Copy the www folder to your web server
 ### On Android Phone
 
 ```sh
+cp config ... change environment
+
+
 ionic build --prod && npx cap copy && npx cap sync
 ```
 

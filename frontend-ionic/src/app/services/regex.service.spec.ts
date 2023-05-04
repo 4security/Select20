@@ -6,6 +6,7 @@ import { RegexService } from './regex.service';
 import { addDays, isFriday, isSaturday, isToday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { defaultCurrentProject } from '../config';
+import { defaultProjects } from '../config';
 
 describe('RegexService', () => {
   let service: RegexService;
@@ -19,7 +20,15 @@ describe('RegexService', () => {
 
     service = TestBed.inject(RegexService);
     parseService = TestBed.inject(ParserService);
-    service.projectTitles = ['java', 'horst', 'kalle'];
+    service.projectTitles = ['inbox', 'java', 'horst', 'kalle'];
+    let java = structuredClone(defaultCurrentProject);
+    java.title = "java";
+    let horst = structuredClone(defaultCurrentProject);
+    horst.title = "horst";
+    let kalle = structuredClone(defaultCurrentProject);
+    kalle.title = "kalle";
+
+    service.projects = [defaultProjects[0], java, horst, kalle];
     todo = {
       icsid: '432432',
       uid: '324324',
@@ -192,19 +201,19 @@ describe('RegexService', () => {
     let result: Todo = service.extractKeywords('#kalle go home', todo);
     expect(result.project.title == 'kalle').toBeTrue();
   });
-  /*
-    it('detect no project in url', () => {
-      let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo);
-      expect(result.project.title != 'kalle').toBeTrue();
-    });
-  */
+
+  it('detect no project in url', () => {
+    let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo);
+    expect(result.project.title != 'kalle').toBeTrue();
+  });
+
   it('detect misspelled project', () => {
     let result: Todo = service.extractKeywords('* go home#klle', todo);
     expect(result.project.title == 'kalle').toBeTrue();
   });
 
   it('detect short version project', () => {
-    let result: Todo = service.extractKeywords('* go home #ja afafaf', todo);
+    let result: Todo = service.extractKeywords('* go home #ja  afafaf', todo);
     expect(result.project.title == 'java').toBeTrue();
   });
 
