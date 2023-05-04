@@ -202,6 +202,7 @@ describe('RegexService', () => {
     expect(result.project.title == 'kalle').toBeTrue();
   });
 
+
   it('detect no project in url', () => {
     let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo);
     expect(result.project.title != 'kalle').toBeTrue();
