@@ -31,13 +31,21 @@ export class RegexService {
     private storage: Storage
   ) {
     this.storage.create();
-    this.storage?.get('projectTitles').then((projectTitles: string[]) => {
+    this.storage.get('projectTitles').then((projectTitles: string[]) => {
       this.projectTitles = projectTitles;
-      this.storage?.get('projects').then((projects: Project[]) => {
+      this.storage.get('projects').then((projects: Project[]) => {
         this.projects = projects;
+        console.log("In projects", projectTitles);
+
       });
     });
 
+  }
+
+  public loadProjects(projectTitles, projects) {
+
+    this.projectTitles = projectTitles;
+    this.projects = projects;
   }
 
   extractKeywords(summary: string, todo: Todo): Todo {

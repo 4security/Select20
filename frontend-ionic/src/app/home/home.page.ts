@@ -722,10 +722,16 @@ export class HomePage implements OnInit {
       project.url = element;
       project.title = element;
       this.projects.push(project);
+      let calendar = structuredClone(defaultCalendar);
+      calendar.name = element;
+      this.calendars.push(calendar);
     });
+    this.storage.set("projects", this.projects);
     this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcomming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
-    this.storage.set('calendars', [defaultCalendar]);
+    this.storage.set('calendars', this.calendars);
+    this.regexService.loadProjects(this.projectsTitles, this.projects);
     this.registerModal.dismiss();
+    this.todos = [];
     console.log('✅ Demo Mode active');
     this.demoMode = true;
   }

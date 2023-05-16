@@ -14,10 +14,9 @@
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="calendar"></ion-icon>
-      <ion-select aria-label="calendar" placeholder="Select Calendar" *ngFor="let calendar of calendars">
-        <ion-select-option value=[calendar.url]>{{calendar.name}}</ion-select-option>
+      <ion-select aria-label="calendar" (ionChange)="handleChange($event)" placeholder="Select Calendar">
+        <ion-select-option *ngFor="let calendar of calendars" [value]="calendar">{{calendar.name}}</ion-select-option>
       </ion-select>
-
     </ion-item>
 
     <ion-item>

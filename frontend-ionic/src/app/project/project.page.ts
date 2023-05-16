@@ -119,6 +119,10 @@ export class ProjectPage {
     }
   }
 
+  handleChange(e) {
+    this.calendar = e.detail.value;
+  }
+
   private deleteProject(objIndex: number, projectsPersist: Todo) {
     this.nextcloudService.deleteProjects(this.projects[objIndex].url).subscribe({
       next: (data) => {
