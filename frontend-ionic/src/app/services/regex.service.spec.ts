@@ -19,7 +19,15 @@ describe('RegexService', () => {
 
     service = TestBed.inject(RegexService);
     parseService = TestBed.inject(ParserService);
-    service.projectTitles = ['java', 'horst', 'kalle'];
+    service.projectTitles = ['inbox', 'java', 'horst', 'kalle'];
+    let java = structuredClone(defaultCurrentProject);
+    java.title = "java";
+    let horst = structuredClone(defaultCurrentProject);
+    horst.title = "horst";
+    let kalle = structuredClone(defaultCurrentProject);
+    kalle.title = "kalle";
+    service.projects = [java, horst, kalle];
+
     todo = {
       icsid: '432432',
       uid: '324324',
