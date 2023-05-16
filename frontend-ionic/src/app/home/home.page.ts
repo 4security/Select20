@@ -724,6 +724,7 @@ export class HomePage implements OnInit {
       this.projects.push(project);
     });
     this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcomming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
+    this.storage.set('calendars', [defaultCalendar]);
     this.registerModal.dismiss();
     console.log('✅ Demo Mode active');
     this.demoMode = true;

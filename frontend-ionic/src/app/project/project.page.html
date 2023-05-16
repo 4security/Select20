@@ -1,65 +1,37 @@
 <ion-header> </ion-header>
 
 <ion-content>
-      <ion-button [routerLink]="['/home']"
-    ><ion-icon name="arrow-back"></ion-icon> Go back
+  <ion-button [routerLink]="['/home']"><ion-icon name="arrow-back"></ion-icon> Go back
   </ion-button>
   <ion-list>
     <ion-item>
       <ion-icon slot="start" name="create"></ion-icon>
-      <ion-input
-        aria-label="Title"
-        slot="end"
-        type="text"
-        [(ngModel)]="title"
-        pattern=".{3,20}"
-      ></ion-input>
+      <ion-input aria-label="Title" slot="end" type="text" [(ngModel)]="title" pattern=".{3,20}"></ion-input>
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="list"></ion-icon>
-      <ion-input
-        aria-label="Sorting"
-        slot="end"
-        type="number"
-        [(ngModel)]="sorting"
-        pattern="\d{1,2}"
-      ></ion-input>
+      <ion-input aria-label="Sorting" slot="end" type="number" [(ngModel)]="sorting" pattern="\d{1,2}"></ion-input>
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="calendar"></ion-icon>
-      <ionic-selectable
-        [(ngModel)]="calendar"
-        [items]="calendars"
-        itemValueField="url"
-        itemTextField="name"
-        [canSearch]="true"
-      >
-      </ionic-selectable>
+      <ion-select aria-label="calendar" placeholder="Select Calendar" *ngFor="let calendar of calendars">
+        <ion-select-option value=[calendar.url]>{{calendar.name}}</ion-select-option>
+      </ion-select>
+
     </ion-item>
 
     <ion-item>
       <ion-icon slot="start" name="chevron-forward"></ion-icon>
-      <ion-checkbox
-        slot="end"
-        aria-label="intendation"
-        [(ngModel)]="intendation"
-      ></ion-checkbox>
+      <ion-checkbox slot="end" aria-label="intendation" [(ngModel)]="intendation"></ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="eye"></ion-icon>
-      <ion-checkbox
-        slot="end"
-        aria-label="visible"
-        [(ngModel)]="visible"
-      ></ion-checkbox>
+      <ion-checkbox slot="end" aria-label="visible" [(ngModel)]="visible"></ion-checkbox>
     </ion-item>
-    <ion-button *ngIf="!isANewProject" (click)="removeProject()"
-      ><ion-icon name="trash" style="margin-right: 20px"></ion-icon>
-      Delete</ion-button
-    >
-    <ion-button (click)="saveProject()"
-      ><ion-icon name="save" style="margin-right: 20px"></ion-icon>
-      Save</ion-button
-    >
+    <div *ngIf="!isANewProject"> <ion-button (click)="removeProject()"><ion-icon name="trash"
+          style="margin-right: 20px"></ion-icon>
+        Delete</ion-button></div>
+    <ion-button (click)="saveProject()"><ion-icon name="save" style="margin-right: 20px"></ion-icon>
+      Save</ion-button>
   </ion-list>
 </ion-content>

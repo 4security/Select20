@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
-import { IonicSelectableModule } from 'ionic-selectable';
 import { ProjectPageRoutingModule } from './project-routing.module';
 
 import { ProjectPage } from './project.page';
@@ -13,7 +12,6 @@ import { ProjectPage } from './project.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    IonicSelectableModule,
     ProjectPageRoutingModule
   ],
   declarations: [ProjectPage]

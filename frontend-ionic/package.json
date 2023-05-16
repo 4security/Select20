@@ -36,7 +36,6 @@
         "axios": "^1.4.0",
         "date-fns": "^2.30.0",
         "date-fns-timezone": "^0.1.4",
-        "ionic-selectable": "^4.9.0",
         "ng-drag-drop": "^5.0.0",
         "no-internet": "^1.6.1",
         "npm-check-updates": "^16.10.12",
