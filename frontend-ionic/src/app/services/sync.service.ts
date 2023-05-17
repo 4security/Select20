@@ -8,7 +8,7 @@ import { Project } from '../models/project';
 import { Calendar } from '../models/calendar';
 import { defaultProjects, nextcloudUser } from '../config';
 import { Todo } from '../models/todo';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage-angular';
 import noInternet from 'no-internet';
 import { QueueItem } from '../models/queueItem';
 import { AlertController } from '@ionic/angular';

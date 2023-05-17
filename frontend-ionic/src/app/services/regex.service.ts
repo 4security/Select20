@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import {
   addDays,
   addMinutes,
@@ -15,7 +15,6 @@ import {
 } from 'date-fns';
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
-import { Storage } from '@ionic/storage';
 import { Project } from '../models/project';
 
 
@@ -27,28 +26,17 @@ export class RegexService {
   projects: Project[] = []
 
   constructor(
-    private messageService: MessageService,
-    private storage: Storage
+    private messageService: MessageService
   ) {
-    this.storage.create();
-    this.storage.get('projectTitles').then((projectTitles: string[]) => {
-      this.projectTitles = projectTitles;
-      this.storage.get('projects').then((projects: Project[]) => {
-        this.projects = projects;
-        console.log("In projects", projectTitles);
 
-      });
-    });
 
   }
 
-  public loadProjects(projectTitles, projects) {
-
+  extractKeywords(summary: string, todo: Todo, projects, projectTitles): Todo {
     this.projectTitles = projectTitles;
     this.projects = projects;
-  }
+    console.log(projectTitles);
 
-  extractKeywords(summary: string, todo: Todo): Todo {
     summary = this.detectPrio(summary, todo);
     summary = this.detectRrule(summary, todo);
     summary = this.detectDay(summary, todo);

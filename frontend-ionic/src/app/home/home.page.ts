@@ -44,8 +44,8 @@ export class HomePage implements OnInit {
   defaultCalendar: Calendar = defaultCalendar;
   calendars: Calendar[] = [];
   currentProject: Project = defaultCurrentProject;
+  projectTitles: String[] = [];
   projects: Project[] = defaultProjects;
-  projectsTitles: string[] = [];
   queueLength: number = 0;
 
   today: string = 'Loading ...';
@@ -139,32 +139,35 @@ export class HomePage implements OnInit {
   }
 
   getTodosFromCache() {
-    this._storage.get('projects').then((projects: Project[]) => {
-      this._storage.get('todos').then(
-        (todos: Todo[]) => {
-          this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
-            this.projects = projects;
-            this.todos = todos;
-            this.todosCopy = todos;
-            this.relatedTodos = relatedTodos;
+    this._storage.get('projectTitles').then((projectTitles: String[]) => {
+      this._storage.get('projects').then((projects: Project[]) => {
+        this._storage.get('todos').then(
+          (todos: Todo[]) => {
+            this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
+              this.projects = projects;
+              this.todos = todos;
+              this.todosCopy = todos;
+              this.relatedTodos = relatedTodos;
+              this.projectTitles = projectTitles;
 
-            this.showProjectTodos(this.currentProject);
-          });
-        },
-        (error) => {
-          console.error('⭕  Cannot get todos form cache');
-        }
-      );
-      this._storage.get('queue').then(
-        (queue: QueueItem[]) => {
-          if (queue != null) {
-            this.queueLength = queue.length;
+              this.showProjectTodos(this.currentProject);
+            });
+          },
+          (error) => {
+            console.error('⭕  Cannot get todos form cache');
           }
-        },
-        (error) => {
-          console.error('⭕  Cannot get queue form cache');
-        }
-      );
+        );
+        this._storage.get('queue').then(
+          (queue: QueueItem[]) => {
+            if (queue != null) {
+              this.queueLength = queue.length;
+            }
+          },
+          (error) => {
+            console.error('⭕  Cannot get queue form cache');
+          }
+        );
+      });
     });
   }
 
@@ -225,7 +228,7 @@ export class HomePage implements OnInit {
       isOverdue: false,
       subs: [],
     };
-    let newTodo: Todo = this.regexService.extractKeywords(text, todo);
+    let newTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
 
     if (this.parserService.checkTodoForLogic(todo)) {
       if (this.superTodoText != '') {
@@ -358,7 +361,7 @@ export class HomePage implements OnInit {
       .replace('\n', '')
       .replace('<br>', '');
     let originalTodo: string = text;
-    let extractedTodo: Todo = this.regexService.extractKeywords(text, todo);
+    let extractedTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
 
     if (text.match(/[e|E]very\s\d?\s?(mon|tue|wed|thu|fri|sat|sun)/i)?.input) {
       extractedTodo.description = extractedTodo.description.replace(
@@ -729,7 +732,6 @@ export class HomePage implements OnInit {
     this.storage.set("projects", this.projects);
     this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcomming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
     this.storage.set('calendars', this.calendars);
-    this.regexService.loadProjects(this.projectsTitles, this.projects);
     this.registerModal.dismiss();
     this.todos = [];
     console.log('✅ Demo Mode active');
