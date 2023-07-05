@@ -125,7 +125,7 @@ export class ProjectPage {
 
   private deleteProject(objIndex: number, projectsPersist: Todo) {
     this.nextcloudService.deleteProjects(this.projects[objIndex].url).subscribe({
-      next: (data) => {
+      next: (deleteAnswer: string) => {
         this.messageService.show('💾 Project deleted');
         this.saveProjectsInInboxTodo(projectsPersist);
       },
@@ -193,13 +193,18 @@ export class ProjectPage {
         false
       )
       .subscribe({
-        next: (data: string) => {
-          this.messageService.show('💾 Project saved');
-          this._storage.set('projects', this.projects).then((projects: Project[]) => {
-            this.router.navigate(['home'], {
-              state: { projects: this.projects },
+        next: (answerProjectSaved: string) => {
+          if (answerProjectSaved == "") {
+            this.messageService.show('💾 Project saved');
+            this._storage.set('projects', this.projects).then((projects: Project[]) => {
+              this.router.navigate(['home'], {
+                state: { projects: this.projects },
+              });
             });
-          });
+          } else {
+            this.messageService.show('⭕ Sabre Error Project not saved');
+            console.error("⭕ Sabre Error Project not saved", answerProjectSaved);
+          }
         },
         error: (error) => {
           this.messageService.show('⭕ Project not saved');

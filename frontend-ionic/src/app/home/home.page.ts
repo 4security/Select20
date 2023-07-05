@@ -18,6 +18,7 @@ import { Todo } from '../models/todo';
 import { Project } from '../models/project';
 import { MessageService } from '../services/message.service';
 import { Calendar } from '../models/calendar';
+import noInternet from 'no-internet';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QueueItem } from '../models/queueItem';
 import {
@@ -40,6 +41,7 @@ export class HomePage implements OnInit {
   supertaskTodo: Todo;
   lastSubmittedTodo: string = '';
   superTodoText: string = '';
+  refreshIcon: string = 'refresh';
 
   defaultCalendar: Calendar = defaultCalendar;
   calendars: Calendar[] = [];
@@ -115,6 +117,11 @@ export class HomePage implements OnInit {
     let offlineSyncBackgroundJob = setInterval(() => {
       this.syncService.startOfflineSync();
     }, 15 * 60000);
+    noInternet().then((offline) => {
+      if (offline) {
+        this.refreshIcon = "cloud-offline";
+      }
+    });
   }
 
   sync() {
@@ -125,9 +132,20 @@ export class HomePage implements OnInit {
     this.syncTest = setInterval(() => {
       let syncStatus = this.syncService.getSyncStatus();
       // console.debug("Sync-Status:" + syncStatus);
+      if (syncStatus == 'offline') {
+        this.updateQueueLength();
+        clearInterval(this.syncTest);
+        this.isSyncActive = false;
+      }
       if (syncStatus == 'resolved') {
         clearInterval(this.syncTest);
+        this.updateQueueLength();
         this.getTodosFromCache();
+        this.isSyncActive = false;
+      }
+      if (syncStatus == 'timeout') {
+        clearInterval(this.syncTest);
+        this.messageService.show("⭕ Connectivity issues")
         this.isSyncActive = false;
       }
       if (syncStatus == 'not authorized' && !this.registerModal.isOpen) {
@@ -154,21 +172,25 @@ export class HomePage implements OnInit {
             });
           },
           (error) => {
-            console.error('⭕  Cannot get todos form cache');
+            console.error('⭕ Cannot get todos form cache');
           }
         );
-        this._storage.get('queue').then(
-          (queue: QueueItem[]) => {
-            if (queue != null) {
-              this.queueLength = queue.length;
-            }
-          },
-          (error) => {
-            console.error('⭕  Cannot get queue form cache');
-          }
-        );
+        this.updateQueueLength();
       });
     });
+  }
+
+  updateQueueLength() {
+    this._storage.get('queue').then(
+      (queue: QueueItem[]) => {
+        if (queue != null) {
+          this.queueLength = queue.length;
+        }
+      },
+      (error) => {
+        console.error('⭕ Cannot get queue form cache');
+      }
+    );
   }
 
   showMenu() {
@@ -293,10 +315,19 @@ export class HomePage implements OnInit {
           false
         )
         .subscribe({
-          next: (result) => {
+          next: (todoAnswer: string) => {
             // console.log('Undo todo', this.lastChangedTodo.title);
-            this.messageService.show('💾 Undo Change');
-            this.todos[this.indexOfLastChangedTodo] = this.lastChangedTodo;
+            if (todoAnswer == "") {
+              this.messageService.show('💾 Undo Change');
+              this.todos[this.indexOfLastChangedTodo] = this.lastChangedTodo;
+            } else {
+              this.messageService.show('Sabre Error Undo Change' + todoAnswer, true);
+              console.error(
+                '⭕ Sabre Error Undo Change',
+                todoAnswer
+              );
+            }
+
           },
           error: (error) => {
             this.messageService.show('Error Undo Change' + error, true);
@@ -428,8 +459,8 @@ export class HomePage implements OnInit {
       this.nextcloud
         .pushTodo(project, todo, newRawTodo, isDeleted)
         .subscribe({
-          next: (resultCreation: string) => {
-            if (resultCreation == '') {
+          next: (todoAnswer: string) => {
+            if (todoAnswer == '') {
               if (isDeleted) {
                 this.messageService.show('👍 Finish todo ' + todo.title);
               } else if (
@@ -455,8 +486,8 @@ export class HomePage implements OnInit {
               this._storage.set('todos', this.todos);
               return true;
             } else {
-              console.error('⭕ Sabre Error', resultCreation);
-              this.messageService.show('⭕ Sabre Error - ' + resultCreation);
+              console.error('⭕ Sabre Error', todoAnswer);
+              this.messageService.show('⭕ Sabre Error - ' + todoAnswer);
               return false;
             }
           },
@@ -469,10 +500,11 @@ export class HomePage implements OnInit {
               saveOffline.todo = todo;
               saveOffline.raw = newRawTodo;
               this.syncService.addToQueue(saveOffline);
+              this.queueLength++;
             }
 
             return false;
-          },
+          }
         });
     }
   }
@@ -702,8 +734,8 @@ export class HomePage implements OnInit {
 
   login() {
     this.nextcloud.login(this.emaillogin, this.passwordlogin).subscribe({
-      next: (loginResults) => {
-        console.log('✅ Credentials correct');
+      next: (loginAnswer: string) => {
+        console.log('✅ Credentials correct', loginAnswer);
         this.sync();
         this.registerModal.dismiss();
       },
@@ -752,11 +784,13 @@ export class HomePage implements OnInit {
         this.nextcloudapi
       )
       .subscribe({
-        next: (loginResults) => {
+        next: (loginAnswer: string) => {
           this.sync();
+          console.log("Login Self hosted worked", loginAnswer)
           this.messageService.show("Register successful. Login now!");
         },
         error: (error) => {
+          console.error("Self hosting login failed", error)
           this.messageService.show(
             'Error register - validate your inputs'
           );

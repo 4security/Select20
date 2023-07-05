@@ -30,6 +30,7 @@ export class SyncService {
   syncActive = false;
   syncStatus: string = 'initial';
   isLoginOpen: boolean = false;
+  superTimeout: any;
 
   constructor(
     private nextcloud: NextcloudService,
@@ -40,26 +41,47 @@ export class SyncService {
   ) { }
 
   startSync() {
-    if (!this.syncActive) {
-      console.log('🔁 Sync started');
-      this.syncStatus = 'running';
-      this.syncActive = true;
-      this.calendars = [];
-      this.timeForSync = performance.now();
-      this.storage
-        ?.get('projects')
-        .then((projects) => {
-          this.projects = projects;
-          this.getProjectsAddNewOnes();
-          this.startOfflineSync();
-        })
-        .catch((err) => {
-          this.projects = defaultProjects;
-          this.getProjectsAddNewOnes();
-        });
-    } else {
-      console.log('🔁 Sync currently in progress');
-    }
+    noInternet().then((offline) => {
+      if (offline) {
+        this.syncActive = false;
+        this.syncStatus = 'offline';
+      } else {
+        if (!this.syncActive) {
+          console.log('🔁 Sync started');
+          this.syncStatus = 'running';
+          this.syncActive = true;
+          this.calendars = [];
+          this.timeForSync = performance.now();
+          this.storage
+            ?.get('projects')
+            .then((projects) => {
+              this.projects = projects;
+              this.getProjectsAddNewOnes();
+              this.startOfflineSync();
+              this.startTimeout();
+            })
+            .catch((err) => {
+              this.projects = defaultProjects;
+              this.getProjectsAddNewOnes();
+            });
+        } else {
+          console.log('🔁 Sync currently in progress');
+        }
+      }
+    });
+
+  }
+
+  startTimeout() {
+    this.superTimeout = setTimeout(() => {
+      this.newTodos = [];
+      this.newRelatedTodos = [];
+      this.syncStatus = 'timeout';
+      this.syncActive = false;
+      console.log(
+        '⭕ Timeout '
+      );
+    }, 15000);
   }
 
   public getSyncStatus(): string {
@@ -67,46 +89,45 @@ export class SyncService {
   }
 
   public startOfflineSync() {
-    noInternet().then((offline) => {
-      if (!offline) {
-        console.log('🔁 Offline sync started');
-        this.storage.get('queue').then((queueItems: QueueItem[]) => {
-          if (queueItems != null) {
-            queueItems.forEach((queueItem) => {
-              this.nextcloud
-                .pushTodo(
-                  queueItem.project,
-                  queueItem.todo,
-                  queueItem.raw,
-                  false
-                )
-                .subscribe({
-                  next: (result) => {
-                    console.log(
-                      '✅ Push Offline todo ',
-                      queueItem.todo.title,
-                      result
-                    );
-                    this.messageService.show('💾 Sync Offline Todo');
-                    this.queueLength = this.queue.length;
-                  },
-                  error: (error) => {
-                    this.messageService.show('Error Sync Offline Todo', true);
-                    console.error(
-                      '⭕ Error Push offline todo',
-                      queueItem.todo.title,
-                      error
-                    );
-                  },
-                });
+    console.log('🔁 Offline sync started');
+    this.storage.get('queue').then((queueItems: QueueItem[]) => {
+      if (queueItems != null) {
+        queueItems.forEach((queueItem: QueueItem, queueIndex: number) => {
+          this.nextcloud
+            .pushTodo(
+              queueItem.project,
+              queueItem.todo,
+              queueItem.raw,
+              false
+            )
+            .subscribe({
+              next: (answerOfflineTodoSynced: string) => {
+                console.log(
+                  '✅ Push Offline todo ',
+                  queueItem.todo.title,
+                  answerOfflineTodoSynced
+                );
+                if (answerOfflineTodoSynced == "") {
+                  console.log(queueIndex);
+                  this.queue.splice(queueIndex, 1);
+                  this.storage.set('queue', this.queue);
+                }
+                this.messageService.show('💾 Sync Offline Todo');
+                this.queueLength = this.queue.length;
+              },
+              error: (error) => {
+                this.messageService.show('Error Sync Offline Todo', true);
+                console.error(
+                  '⭕ Error Push offline todo',
+                  queueItem.todo.title,
+                  error
+                );
+              },
             });
-            this.storage.remove('queue');
-          }
         });
-      } else {
-        console.error('No internet - No sync');
       }
     });
+
   }
 
   getProjectsAddNewOnes(): void {
@@ -253,6 +274,7 @@ export class SyncService {
   finishSync() {
     this.todos = this.newTodos;
     this.relatedTodos = this.newRelatedTodos;
+    clearTimeout(this.superTimeout);
     console.log(
       '✅ Synced ' +
       this.todos.length
