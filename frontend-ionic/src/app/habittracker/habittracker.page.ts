@@ -9,12 +9,12 @@ import { NextcloudService } from '../services/nextcloud.service';
 })
 export class HabittrackerPage implements OnInit {
   habits: any[] = [];
-  constructor(private nextcloud: NextcloudService) {}
+  constructor(private nextcloud: NextcloudService) { }
 
   ngOnInit() {
     this.nextcloud.getHabitMatrix().subscribe({
-      next: (result:any) => {
-        let finishedHabits = JSON.parse(result);
+      next: (finishedHabitsRaw: string) => {
+        let finishedHabits = JSON.parse(finishedHabitsRaw);
         finishedHabits.forEach((habit) => {
           habit.prio = parseInt(habit.prio);
         });

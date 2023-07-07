@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "li.lippke.s20"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "li.lippke.s20"

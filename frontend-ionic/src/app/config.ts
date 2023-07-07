@@ -1,7 +1,7 @@
 import { Calendar } from "./models/calendar";
 import { Project } from "./models/project";
 
-const proxyDomain = "http://localhost:8001/api";
+const proxyDomain = "http://localhost/api";
 const defaultCalendar: Calendar = {
     name: "tasks",
     url: "tasks"
