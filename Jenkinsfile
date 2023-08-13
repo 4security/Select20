@@ -15,7 +15,7 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'bitnami/laravel:10'
+                    image 'composer:2.5.8'
                 }
             }
             stages {
@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'satantime/puppeteer-node:19-buster-slim'
+                    image 'satantime/puppeteer-node:20-buster-slim'
                 }
             }
 
@@ -62,9 +62,11 @@ pipeline {
                 stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm install -f'
-                            sh 'npm install -g @angular/cli'
-                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.js'
+                            sh 'corepack enable'
+                            sh 'corepack prepare pnpm@latest-8 --activate'
+                            sh 'pnpm install'
+                            sh 'pnpm install -g @angular/cli'
+                            sh 'pnpm i -D puppeteer && node node_modules/puppeteer/install.js'
                         }
                     }
                 }
