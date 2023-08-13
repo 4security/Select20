@@ -8,6 +8,7 @@ COPY package.json .
 ENV PUPPETEER_SKIP_DOWNLOAD='true'
 RUN pnpm install --prod --frozen-lockfile
 RUN pnpm install @ionic/cli -g
+RUN pnpm install @angular/cli -g
 COPY . .
 RUN ionic build --prod
 
