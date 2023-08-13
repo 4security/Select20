@@ -65,7 +65,7 @@ pipeline {
                             sh 'corepack enable'
                             sh 'corepack prepare pnpm@latest-8 --activate'
                             sh 'pnpm install'
-                            sh 'pnpm install -g @angular/cli'
+                            sh 'pnpm install @angular/cli'
                             sh 'pnpm i -D puppeteer && node node_modules/puppeteer/install.js'
                         }
                     }
@@ -74,7 +74,7 @@ pipeline {
                 stage('Run Tests') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'ng test'
+                            sh 'npm run-script ng test'
                         }
                     }
                 }
