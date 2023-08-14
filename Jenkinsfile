@@ -62,10 +62,9 @@ pipeline {
                 stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'apt update && apt install curl -y && curl -fsSL https://get.pnpm.io/install.sh | sh -'
-                            sh 'pnpm install'
-                            sh 'pnpm install @angular/cli'
-                            sh 'pnpm i -D puppeteer && node node_modules/puppeteer/install.js'
+                            sh 'npm install -f'
+                            sh 'npm install -g @angular/cli'
+                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.js'
                         }
                     }
                 }
@@ -73,7 +72,7 @@ pipeline {
                 stage('Run Tests') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm run-script ng test'
+                            sh 'ng test'
                         }
                     }
                 }
