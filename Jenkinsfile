@@ -62,8 +62,7 @@ pipeline {
                 stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'curl -fsSL https://get.pnpm.io/install.sh | sh -'
-                            sh 'apk add --no-cache curl  && curl -sL https://unpkg.com/@pnpm/self-installer | node'
+                            sh 'apt install curl && curl -fsSL https://get.pnpm.io/install.sh | sh -'
                             sh 'pnpm install'
                             sh 'pnpm install @angular/cli'
                             sh 'pnpm i -D puppeteer && node node_modules/puppeteer/install.js'
