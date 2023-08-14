@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'node:20-slim'
+                    image 'node:20'
                 }
             }
 
