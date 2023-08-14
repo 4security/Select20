@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'node:20'
+                    image 'satantime/puppeteer-node:19-buster-slim'
                 }
             }
 
@@ -62,8 +62,8 @@ pipeline {
                 stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'corepack enable'
-                            sh 'corepack prepare pnpm@latest-8 --activate'
+                            sh 'curl -fsSL https://get.pnpm.io/install.sh | sh -'
+                            sh 'apk add --no-cache curl  && curl -sL https://unpkg.com/@pnpm/self-installer | node'
                             sh 'pnpm install'
                             sh 'pnpm install @angular/cli'
                             sh 'pnpm i -D puppeteer && node node_modules/puppeteer/install.js'
