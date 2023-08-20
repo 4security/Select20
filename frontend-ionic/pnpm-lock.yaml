@@ -57,10 +57,10 @@ dependencies:
     specifier: ^10.0.0
     version: 10.0.0(@angular/compiler-cli@16.2.0)(@angular/service-worker@16.2.0)(@types/node@20.4.10)(karma@6.4.2)(protractor@7.0.0)(typescript@5.1.6)(webpack@5.88.2)
   '@ionic/storage':
-    specifier: ^4.0.0
+    specifier: ^4.0.0-next.1
     version: 4.0.0
   '@ionic/storage-angular':
-    specifier: ^4.0.0
+    specifier: '^4.0.0-next.1 '
     version: 4.0.0(@angular/core@16.2.0)(rxjs@7.8.1)
   '@jcesarmobile/ssl-skip':
     specifier: ^0.2.0
