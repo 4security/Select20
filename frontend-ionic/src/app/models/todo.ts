@@ -25,4 +25,5 @@ export class Todo {
   isChecklist: boolean;
   isOverdue: boolean;
   subs: Todo[];
+  tags: string[]
 }

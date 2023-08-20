@@ -105,6 +105,7 @@ export class ProjectPage {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
 

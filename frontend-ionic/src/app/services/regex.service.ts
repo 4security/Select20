@@ -44,6 +44,7 @@ export class RegexService {
     summary = this.detectDuration(summary, todo);
     summary = this.detectProject(summary, todo);
     summary = this.detectChecklist(summary, todo);
+    summary = this.detectTags(summary, todo);
     todo.title = summary.replace(/<div>|<\/div>|<br>|<\/br>|&nbsp;/g, '');
     todo.isOverdue = false;
     return todo;
@@ -330,6 +331,21 @@ export class RegexService {
       let regexChecklistAsterix: RegExp = /\*\s/g;
       let rawChecklistAsterix: RegExpExecArray = regexChecklistAsterix.exec(summary);
       todo.isChecklist = rawChecklistAsterix === null ? false : true;
+    } else {
+      todo.isChecklist = false;
+    }
+
+    return summary;
+  }
+
+  detectTags(summary: string, todo: Todo): string {
+    if (summary.match(/\@\w{2,15}\b/i)?.input) {
+      let regexTags: RegExp = /\@(\w{2,15})\b/g;
+      let rawTags: RegExpExecArray = regexTags.exec(summary);
+      if (rawTags != null) {
+        todo.tags.push(rawTags[1])
+        summary = summary.replace("@" + rawTags[1], '');
+      }
     } else {
       todo.isChecklist = false;
     }

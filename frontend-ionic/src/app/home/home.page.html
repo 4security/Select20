@@ -117,6 +117,12 @@
                 <ion-icon name="hourglass"></ion-icon>
                 {{todo.duration}}m
               </div>
+              <div *ngFor="let tag of todo.tags" style="display: inline;">
+                <div class="chip" *ngIf="tag!=''" style="display: inline;" (click)="deleteTag(todo, tag)">
+                  <ion-icon name=" pricetag"></ion-icon>
+                  {{tag}}
+                </div>
+              </div>
             </div>
 
             <br />

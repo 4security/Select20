@@ -248,6 +248,7 @@ export class HomePage implements OnInit {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
     let newTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
@@ -663,6 +664,34 @@ export class HomePage implements OnInit {
       await alert.present();
     }
   }
+
+  async deleteTag(todo: Todo, tag: string) {
+    if (!this.currentProject.title.includes('Today')) {
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Remove Tag?',
+        message: 'Confirm to remove tag ' + tag + '?',
+
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Submit',
+            handler: () => {
+              todo.tags = todo.tags.filter(e => e !== tag)
+              todo.description = todo.description.replace(tag + /,?/, '');
+              this.updateTodo(todo, this.currentProject, false);
+            },
+          },
+        ],
+      });
+      await alert.present();
+    }
+  }
+
 
   refreshCircle(event) {
     this.refresh();

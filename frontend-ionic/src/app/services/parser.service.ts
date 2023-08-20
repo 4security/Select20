@@ -68,6 +68,8 @@ export class ParserService {
     let rawDuration: RegExpExecArray = regexDuration.exec(rawTodo);
     let regexEnd: RegExp = /;ENDCAL=([^;|\n]{2,50})/g;
     let rawEnd: RegExpExecArray = regexEnd.exec(rawTodo);
+    let regexTags: RegExp = /;TACKS=([^;|\n]{2,50})/g;
+    let rawTags: RegExpExecArray = regexTags.exec(rawTodo);
 
     let todo: Todo = {
       uid: rawUid === null ? 'nouuid' : rawUid[1].toString(),
@@ -93,6 +95,7 @@ export class ParserService {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: rawTags === null ? [] : rawTags[1].split(","),
       subs: [],
     };
     if (todo.title.match(/\*\s/)) {
@@ -100,6 +103,7 @@ export class ParserService {
     }
     todo.description = todo.description
       .replace(/\;?ENDCAL=[0-9T]{15}/g, '')
+      .replace(/\;?TACKS=[\,|\w]{2,50}/g, '')
       .replace(/\;?DURATION=[0-9]{1,4}/g, '');
     this.showNextEventOfRrule(todo);
     if (todo.due != '') {
@@ -217,6 +221,7 @@ export class ParserService {
       '\nDESCRIPTION:' +
       todo.description
         .replace(/\;?ENDCAL=[0-9T]{15}/g, '')
+        .replace(/\;?TACKS=[\,|\w]{2,50}/g, '')
         .replace(/\;?DURATION=[0-9]{1,4}/g, '');
     if (todo.enddate != '') {
       newRawTodo += ';ENDCAL=' + todo.enddate;
@@ -227,6 +232,9 @@ export class ParserService {
       newRawTodo +=
         ';ENDCAL=' +
         this.regexService.formatIcsDate(addMinutes(parseISO(todo.due), 30));
+    }
+    if (todo.tags.length > 0) {
+      newRawTodo += ';TACKS=' + todo.tags.join(",");
     }
 
     if (todo.enddate != '') {
