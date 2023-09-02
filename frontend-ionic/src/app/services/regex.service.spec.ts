@@ -264,6 +264,21 @@ describe('RegexService', () => {
     expect(result.isChecklist).toBeFalse();
   });
 
+  it('detect tags', () => {
+    let result: Todo = service.extractKeywords('* go home @horst @pgei @focusos', todo, projects, projectTitles);
+    expect(result.tags.length == 3).toBeTrue();
+  });
+
+  it('detect tags not with a space', () => {
+    let result: Todo = service.extractKeywords('* go home @horst @ leerzeichen @focusos', todo, projects, projectTitles);
+    expect(result.tags.length == 2).toBeTrue();
+  });
+
+  it('detect tags at start', () => {
+    let result: Todo = service.extractKeywords('@pgei is greate', todo, projects, projectTitles);
+    expect(result.tags[0] == "pgei").toBeTrue();
+  });
+
   it('strip day from summary', () => {
     let result: Todo = service.extractKeywords('fri go home', todo, projects, projectTitles);
     expect(result.title.includes('fri')).toBeFalsy();
