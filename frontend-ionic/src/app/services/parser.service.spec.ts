@@ -46,6 +46,7 @@ describe('ParserService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
@@ -75,6 +76,7 @@ describe('ParserService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });

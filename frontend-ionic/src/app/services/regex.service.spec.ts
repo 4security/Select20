@@ -55,6 +55,7 @@ describe('RegexService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
@@ -84,6 +85,7 @@ describe('RegexService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
@@ -203,12 +205,12 @@ describe('RegexService', () => {
     let result: Todo = service.extractKeywords('#kalle go home', todo, projects, projectTitles);
     expect(result.project.title == 'kalle').toBeTrue();
   });
-  /*
-    it('detect no project in url', () => {
-      let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo, projects, projectTitles);
-      expect(result.project.title != 'kalle').toBeTrue();
-    });
-  */
+
+  it('detect no project in url', () => {
+    let result: Todo = service.extractKeywords('* go home https://adfas.de#kalle', todo, projects, projectTitles);
+    expect(result.project.title != 'kalle').toBeTrue();
+  });
+
   it('detect misspelled project', () => {
     let result: Todo = service.extractKeywords('* go home#klle', todo, projects, projectTitles);
     expect(result.project.title == 'kalle').toBeTrue();
@@ -250,11 +252,8 @@ describe('RegexService', () => {
   });
 
   it('detect checklist', () => {
-    let result: Todo = service.extractKeywords(
-      '* go home 01.09.202617:11',
-      todo, projects, projectTitles
-    );
-    expect(result.isChecklist).toBeTrue();
+    let result: Todo = service.extractKeywords('* go home', todo, projects, projectTitles);
+    expect(result.isChecklist == true).toBeTrue();
   });
 
   it('detect no checklist', () => {
@@ -263,6 +262,21 @@ describe('RegexService', () => {
       todo, projects, projectTitles
     );
     expect(result.isChecklist).toBeFalse();
+  });
+
+  it('detect tags', () => {
+    let result: Todo = service.extractKeywords('* go home @horst @pgei @focusos', todo, projects, projectTitles);
+    expect(result.tags.length == 3).toBeTrue();
+  });
+
+  it('detect tags not with a space', () => {
+    let result: Todo = service.extractKeywords('* go home @horst @ leerzeichen @focusos', todo, projects, projectTitles);
+    expect(result.tags.length == 2).toBeTrue();
+  });
+
+  it('detect tags at start', () => {
+    let result: Todo = service.extractKeywords('@pgei is greate', todo, projects, projectTitles);
+    expect(result.tags[0] == "pgei").toBeTrue();
   });
 
   it('strip day from summary', () => {

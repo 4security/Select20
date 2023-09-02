@@ -6,7 +6,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml .
 COPY package.json .
 ENV PUPPETEER_SKIP_DOWNLOAD='true'
-RUN pnpm install --prod 
+RUN pnpm install --prod
 RUN pnpm install --save-dev @angular-devkit/build-angular
 RUN pnpm install @angular/cli -g
 RUN pnpm install @ionic/cli -g

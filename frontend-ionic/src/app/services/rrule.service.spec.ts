@@ -43,6 +43,7 @@ describe('RruleService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
@@ -72,6 +73,7 @@ describe('RruleService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
