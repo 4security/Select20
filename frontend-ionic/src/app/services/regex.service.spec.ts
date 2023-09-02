@@ -55,6 +55,7 @@ describe('RegexService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
@@ -84,6 +85,7 @@ describe('RegexService', () => {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
   });
