@@ -33,7 +33,6 @@ export class RegexService {
   extractKeywords(summary: string, todo: Todo, projects, projectTitles): Todo {
     this.projectTitles = projectTitles;
     this.projects = projects;
-    console.log(projectTitles);
 
     summary = this.detectPrio(summary, todo);
     summary = this.detectRrule(summary, todo);
@@ -43,7 +42,7 @@ export class RegexService {
     summary = this.detectProject(summary, todo);
     summary = this.detectChecklist(summary, todo);
 
-    // detect up to 3 tags
+    // Detect up to 3 tags
     for (let ctrTags = 0; ctrTags < 3; ctrTags++) {
       summary = this.detectTags(summary, todo);
     }

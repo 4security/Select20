@@ -186,10 +186,8 @@ export class SyncService {
         // Delete objects are delete on day in 20** century others have no date inside
         this.storage.set('projects', this.projects).then(() => {
           this.storage.set('projectTitles', this.projectTitles).then(() => {
-
             console.log('🔁 Projects updated');
             this.getTodos();
-
           });
         });
 
@@ -328,7 +326,6 @@ export class SyncService {
           todosIcalRaws[ctrTodos].firstChild.nodeValue,
           project
         );
-        console.log(this.tags)
         this.tags = this.tags.concat(todo.tags);
 
         if (todo.status != 'COMPLETED') {
@@ -370,7 +367,6 @@ export class SyncService {
 
   async presentRegisterPrompt() {
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
       header: 'Register',
       message:
         'You need to allow cookies. The Nextcloud-URL have the format https://[host]/remote.php/dav/calendars/[user]/. The Nextcloud API-Key is available in "Administration Settings > Security > Create new app password."',

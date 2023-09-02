@@ -19,19 +19,21 @@ import { RegexService } from './regex.service';
   providedIn: 'root',
 })
 export class RruleService {
-  constructor(private regexService: RegexService) {}
+  constructor(private regexService: RegexService) { }
 
   calculateNextEvent(todo: Todo, savedNextEvent: string) {
+
     // Examples:
     // RRULE:FREQ=DAILY;INTERVAL=2
     // FREQ=WEEKLY;INTERVAL=1;BYDAY=WE
+
     let regexIntevall: RegExp = /INTERVAL=(\d+)/g;
     let intervall: RegExpExecArray = regexIntevall.exec(todo.rrule);
     let intervallExtracted: number =
       intervall === null ? 1 : parseInt(intervall[1]);
     let nextEvent: Date;
 
-    // remove one day because nextXXXX() functions add further 7 days
+    // Remove one day because nextXXXX() functions add further 7 days
 
     if (savedNextEvent == 'nonextevent') {
       nextEvent = addDays(parseISO(todo.due), (intervallExtracted - 1) * 7);

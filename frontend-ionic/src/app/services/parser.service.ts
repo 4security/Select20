@@ -112,7 +112,7 @@ export class ParserService {
 
     todo.createdUNIX = Math.floor(parseISO(todo.created).getTime() / 1000);
 
-    // sort todos with no time after the todos with timestamp
+    // Sort todos with no time tag after the todos with a timestamp
     if (todo.due.includes('000000')) {
       todo.dueUNIX = Math.floor(endOfDay(parseISO(todo.due)).getTime() / 1000);
     }
@@ -227,7 +227,7 @@ export class ParserService {
       newRawTodo += ';ENDCAL=' + todo.enddate;
     }
 
-    // default 30 min if no end date is caclcuated
+    // Default duration is 30 min if no end date is calculated
     if (todo.enddate == '' && todo.due != '') {
       newRawTodo +=
         ';ENDCAL=' +
