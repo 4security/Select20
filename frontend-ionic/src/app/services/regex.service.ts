@@ -330,9 +330,8 @@ export class RegexService {
 
   detectChecklist(summary: string, todo: Todo): string {
     if (summary.match(/^\*\s/i)?.input) {
-      let regexChecklistAsterix: RegExp = /\*\s/g;
-      let rawChecklistAsterix: RegExpExecArray = regexChecklistAsterix.exec(summary);
-      todo.isChecklist = rawChecklistAsterix === null ? false : true;
+      console.log("delect star");
+      todo.isChecklist = true;
     } else {
       todo.isChecklist = false;
     }
@@ -348,8 +347,6 @@ export class RegexService {
         todo.tags.push(rawTags[1])
         summary = summary.replace("@" + rawTags[1], '');
       }
-    } else {
-      todo.isChecklist = false;
     }
 
     return summary;
