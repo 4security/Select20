@@ -28,8 +28,6 @@ export class RegexService {
   constructor(
     private messageService: MessageService
   ) {
-
-
   }
 
   extractKeywords(summary: string, todo: Todo, projects, projectTitles): Todo {
@@ -44,7 +42,12 @@ export class RegexService {
     summary = this.detectDuration(summary, todo);
     summary = this.detectProject(summary, todo);
     summary = this.detectChecklist(summary, todo);
-    summary = this.detectTags(summary, todo);
+
+    // detect up to 3 tags
+    for (let ctrTags = 0; ctrTags < 3; ctrTags++) {
+      summary = this.detectTags(summary, todo);
+    }
+
     todo.title = summary.replace(/<div>|<\/div>|<br>|<\/br>|&nbsp;/g, '');
     todo.isOverdue = false;
     return todo;

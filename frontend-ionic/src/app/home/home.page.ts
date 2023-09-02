@@ -48,6 +48,7 @@ export class HomePage implements OnInit {
   currentProject: Project = defaultCurrentProject;
   projectTitles: String[] = [];
   projects: Project[] = defaultProjects;
+  tags: String[] = [];
   queueLength: number = 0;
 
   today: string = 'Loading ...';
@@ -159,23 +160,26 @@ export class HomePage implements OnInit {
   getTodosFromCache() {
     this._storage.get('projectTitles').then((projectTitles: String[]) => {
       this._storage.get('projects').then((projects: Project[]) => {
-        this._storage.get('todos').then(
-          (todos: Todo[]) => {
-            this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
-              this.projects = projects;
-              this.todos = todos;
-              this.todosCopy = todos;
-              this.relatedTodos = relatedTodos;
-              this.projectTitles = projectTitles;
+        this._storage.get('tags').then((tags: String[]) => {
+          this._storage.get('todos').then(
+            (todos: Todo[]) => {
+              this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
+                this.projects = projects;
+                this.todos = todos;
+                this.todosCopy = todos;
+                this.tags = tags;
+                this.relatedTodos = relatedTodos;
+                this.projectTitles = projectTitles;
 
-              this.showProjectTodos(this.currentProject);
-            });
-          },
-          (error) => {
-            console.error('⭕ Cannot get todos form cache');
-          }
-        );
-        this.updateQueueLength();
+                this.showProjectTodos(this.currentProject);
+              });
+            },
+            (error) => {
+              console.error('⭕ Cannot get todos form cache');
+            }
+          );
+          this.updateQueueLength();
+        });
       });
     });
   }
@@ -529,6 +533,15 @@ export class HomePage implements OnInit {
   formatDate(todo: Todo): string {
     return this.parserService.formatDateForInterface(todo);
   }
+  showTag(tag) {
+    this.todos.forEach((todo: Todo) => {
+      if (todo.tags.includes(tag)) {
+        todo.isVisible = true;
+      } else {
+        todo.isVisible = false;
+      }
+    });
+  }
 
   showProjectTodos(project: Project) {
     this.heading = project.title;
@@ -666,30 +679,30 @@ export class HomePage implements OnInit {
   }
 
   async deleteTag(todo: Todo, tag: string) {
-    if (!this.currentProject.title.includes('Today')) {
-      const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
-        header: 'Remove Tag?',
-        message: 'Confirm to remove tag ' + tag + '?',
 
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            cssClass: 'secondary',
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Remove Tag?',
+      message: 'Confirm to remove tag ' + tag + '?',
+
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Submit',
+          handler: () => {
+            todo.tags = todo.tags.filter(e => e !== tag)
+            todo.description = todo.description.replace(tag, '');
+            this.updateTodo(todo, this.currentProject, false);
           },
-          {
-            text: 'Submit',
-            handler: () => {
-              todo.tags = todo.tags.filter(e => e !== tag)
-              todo.description = todo.description.replace(tag + /,?/, '');
-              this.updateTodo(todo, this.currentProject, false);
-            },
-          },
-        ],
-      });
-      await alert.present();
-    }
+        },
+      ],
+    });
+    await alert.present();
+
   }
 
 

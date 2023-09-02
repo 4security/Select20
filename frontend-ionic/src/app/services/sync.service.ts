@@ -18,6 +18,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class SyncService {
   todos: Todo[] = [];
+  tags: String[] = [];
   relatedTodos: Todo[] = [];
   newTodos: Todo[] = [];
   newRelatedTodos: Todo[] = [];
@@ -185,8 +186,10 @@ export class SyncService {
         // Delete objects are delete on day in 20** century others have no date inside
         this.storage.set('projects', this.projects).then(() => {
           this.storage.set('projectTitles', this.projectTitles).then(() => {
+
             console.log('🔁 Projects updated');
             this.getTodos();
+
           });
         });
 
@@ -291,11 +294,16 @@ export class SyncService {
           todo.subs.push(relatedTodo);
         }
       });
+
+
     });
     this.storage.set('todos', this.todos).then(() => {
       this.storage.set('relatedTodos', this.relatedTodos).then(() => {
-        this.syncStatus = 'resolved';
-        this.syncActive = false;
+        // add unique tags
+        this.storage.set('tags', this.tags.filter((value, index, array) => array.indexOf(value) === index)).then(() => {
+          this.syncStatus = 'resolved';
+          this.syncActive = false;
+        });
       });
     });
   }
@@ -320,6 +328,8 @@ export class SyncService {
           todosIcalRaws[ctrTodos].firstChild.nodeValue,
           project
         );
+        console.log(this.tags)
+        this.tags = this.tags.concat(todo.tags);
 
         if (todo.status != 'COMPLETED') {
           if (todo.icsid == 's20-dontdeleteprojects') {
