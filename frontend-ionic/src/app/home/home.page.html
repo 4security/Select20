@@ -28,7 +28,6 @@
       <ion-icon name="arrow-undo" (click)="undo()"></ion-icon>
       <ion-icon name="search" (click)="switchSearchMode()"></ion-icon>
       <ion-icon name="help" [routerLink]="['/explain']"></ion-icon>
-      <!--    <ion-icon name="stats-chart"  [routerLink]="['/habittracker']"></ion-icon>  -->
       <ion-icon name="log-out" (click)="logout()" id="open-modal"></ion-icon>
     </div>
 
@@ -74,6 +73,11 @@
           </div>
         </div>
       </div>
+      <div *ngFor="let tag of tags">
+        <div class="project" (click)="showTag(tag)">
+          <ion-icon name="pricetag"></ion-icon> {{tag}}
+        </div>
+      </div>
       <div class="project" id="addProject" (click)="addProject()">
         <ion-icon name="add-outline"></ion-icon>
       </div>
@@ -116,6 +120,12 @@
               <div class="chip" *ngIf="todo.duration != 30">
                 <ion-icon name="hourglass"></ion-icon>
                 {{todo.duration}}m
+              </div>
+              <div *ngFor="let tag of todo.tags" style="display: inline;">
+                <div class="chip" *ngIf="tag!=''" style="display: inline;" (click)="deleteTag(todo, tag)">
+                  <ion-icon name="pricetag"></ion-icon>
+                  {{tag}}
+                </div>
               </div>
             </div>
 

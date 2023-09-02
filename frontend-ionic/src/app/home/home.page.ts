@@ -48,6 +48,7 @@ export class HomePage implements OnInit {
   currentProject: Project = defaultCurrentProject;
   projectTitles: String[] = [];
   projects: Project[] = defaultProjects;
+  tags: String[] = [];
   queueLength: number = 0;
 
   today: string = 'Loading ...';
@@ -131,7 +132,6 @@ export class HomePage implements OnInit {
 
     this.syncTest = setInterval(() => {
       let syncStatus = this.syncService.getSyncStatus();
-      // console.debug("Sync-Status:" + syncStatus);
       if (syncStatus == 'offline') {
         this.updateQueueLength();
         clearInterval(this.syncTest);
@@ -159,23 +159,26 @@ export class HomePage implements OnInit {
   getTodosFromCache() {
     this._storage.get('projectTitles').then((projectTitles: String[]) => {
       this._storage.get('projects').then((projects: Project[]) => {
-        this._storage.get('todos').then(
-          (todos: Todo[]) => {
-            this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
-              this.projects = projects;
-              this.todos = todos;
-              this.todosCopy = todos;
-              this.relatedTodos = relatedTodos;
-              this.projectTitles = projectTitles;
+        this._storage.get('tags').then((tags: String[]) => {
+          this._storage.get('todos').then(
+            (todos: Todo[]) => {
+              this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
+                this.projects = projects;
+                this.todos = todos;
+                this.todosCopy = todos;
+                this.tags = tags;
+                this.relatedTodos = relatedTodos;
+                this.projectTitles = projectTitles;
 
-              this.showProjectTodos(this.currentProject);
-            });
-          },
-          (error) => {
-            console.error('⭕ Cannot get todos form cache');
-          }
-        );
-        this.updateQueueLength();
+                this.showProjectTodos(this.currentProject);
+              });
+            },
+            (error) => {
+              console.error('⭕ Cannot get todos form cache');
+            }
+          );
+          this.updateQueueLength();
+        });
       });
     });
   }
@@ -223,7 +226,7 @@ export class HomePage implements OnInit {
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
 
-    // allow creation of today task at 00:00 --> now() -1
+    // Allow creation of today task at 00:00 --> now() - 1
     let todo: Todo = {
       icsid: newUid,
       uid: newUid,
@@ -248,6 +251,7 @@ export class HomePage implements OnInit {
       isVisible: true,
       isChecklist: false,
       isOverdue: false,
+      tags: [],
       subs: [],
     };
     let newTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
@@ -280,12 +284,12 @@ export class HomePage implements OnInit {
       this.messageService.show('🙈 Hide checklist todo');
       todo.isVisible = false;
     } else {
-      // Rrules cannot be toggled
+      // Recurring rules cannot be toggled
       if (todo.rrule != '') {
         this.messageService.show('👍 Calculate next event of ' + todo.title);
         this.toogleRrule(todo, this.indexOfLastChangedTodo);
 
-        // Toogle normal todos
+        // Toogle for normal todos
       } else {
         this.messageService.show('👍 Finish todo ' + todo.title);
 
@@ -316,7 +320,6 @@ export class HomePage implements OnInit {
         )
         .subscribe({
           next: (todoAnswer: string) => {
-            // console.log('Undo todo', this.lastChangedTodo.title);
             if (todoAnswer == "") {
               this.messageService.show('💾 Undo Change');
               this.todos[this.indexOfLastChangedTodo] = this.lastChangedTodo;
@@ -407,7 +410,7 @@ export class HomePage implements OnInit {
 
       if (extractedTodo.project != oldProject) {
         console.log(
-          'Move from ' + oldProject + ' project ' + extractedTodo.project
+          '✅ Move from ' + oldProject + ' project ' + extractedTodo.project
         );
         this.lastChangedTodo.status = 'COMPLETED';
         this.updateTodo(this.lastChangedTodo, oldProject, true);
@@ -451,8 +454,7 @@ export class HomePage implements OnInit {
 
     let newRawTodo: string = this.parserService.parseTodoToIcal(todo);
 
-    // use inbox if not project is selected
-
+    // Use the inbox if not project is selected as default
 
     todo.title = todo.title.trim();
     if (!this.demoMode) {
@@ -527,6 +529,16 @@ export class HomePage implements OnInit {
 
   formatDate(todo: Todo): string {
     return this.parserService.formatDateForInterface(todo);
+  }
+
+  showTag(tag) {
+    this.todos.forEach((todo: Todo) => {
+      if (todo.tags.includes(tag)) {
+        todo.isVisible = true;
+      } else {
+        todo.isVisible = false;
+      }
+    });
   }
 
   showProjectTodos(project: Project) {
@@ -620,7 +632,7 @@ export class HomePage implements OnInit {
 
   sortByPrio() {
     if (this.todos != null) {
-      // sort first for prio than abc
+      // Sort first for prioirty than alphabetic
       this.todos.sort((a, b) => {
         return a.priority - b.priority || b.createdUNIX - a.createdUNIX;
       });
@@ -635,7 +647,6 @@ export class HomePage implements OnInit {
   async deleteDueDate(todo: Todo) {
     if (!this.currentProject.title.includes('Today')) {
       const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
         header: 'Remove Due?',
         message: 'Confirm to remove due and recurring rule',
 
@@ -663,6 +674,33 @@ export class HomePage implements OnInit {
       await alert.present();
     }
   }
+
+  async deleteTag(todo: Todo, tag: string) {
+
+    const alert = await this.alertController.create({
+      header: 'Remove Tag?',
+      message: 'Confirm to remove tag ' + tag + '?',
+
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Submit',
+          handler: () => {
+            todo.tags = todo.tags.filter(e => e !== tag)
+            todo.description = todo.description.replace(tag, '');
+            this.updateTodo(todo, this.currentProject, false);
+          },
+        },
+      ],
+    });
+    await alert.present();
+
+  }
+
 
   refreshCircle(event) {
     this.refresh();
@@ -753,7 +791,6 @@ export class HomePage implements OnInit {
     let exampleProjects = ["🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]
     exampleProjects.forEach(element => {
       let project = structuredClone(defaultProjects[0]);
-      console.log(element);
       project.url = element;
       project.title = element;
       this.projects.push(project);

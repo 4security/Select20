@@ -18,6 +18,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class SyncService {
   todos: Todo[] = [];
+  tags: String[] = [];
   relatedTodos: Todo[] = [];
   newTodos: Todo[] = [];
   newRelatedTodos: Todo[] = [];
@@ -291,11 +292,16 @@ export class SyncService {
           todo.subs.push(relatedTodo);
         }
       });
+
+
     });
     this.storage.set('todos', this.todos).then(() => {
       this.storage.set('relatedTodos', this.relatedTodos).then(() => {
-        this.syncStatus = 'resolved';
-        this.syncActive = false;
+        // add unique tags
+        this.storage.set('tags', this.tags.filter((value, index, array) => array.indexOf(value) === index)).then(() => {
+          this.syncStatus = 'resolved';
+          this.syncActive = false;
+        });
       });
     });
   }
@@ -320,6 +326,7 @@ export class SyncService {
           todosIcalRaws[ctrTodos].firstChild.nodeValue,
           project
         );
+        this.tags = this.tags.concat(todo.tags);
 
         if (todo.status != 'COMPLETED') {
           if (todo.icsid == 's20-dontdeleteprojects') {
@@ -360,7 +367,6 @@ export class SyncService {
 
   async presentRegisterPrompt() {
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
       header: 'Register',
       message:
         'You need to allow cookies. The Nextcloud-URL have the format https://[host]/remote.php/dav/calendars/[user]/. The Nextcloud API-Key is available in "Administration Settings > Security > Create new app password."',

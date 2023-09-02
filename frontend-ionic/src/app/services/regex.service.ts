@@ -28,14 +28,11 @@ export class RegexService {
   constructor(
     private messageService: MessageService
   ) {
-
-
   }
 
   extractKeywords(summary: string, todo: Todo, projects, projectTitles): Todo {
     this.projectTitles = projectTitles;
     this.projects = projects;
-    console.log(projectTitles);
 
     summary = this.detectPrio(summary, todo);
     summary = this.detectRrule(summary, todo);
@@ -44,6 +41,12 @@ export class RegexService {
     summary = this.detectDuration(summary, todo);
     summary = this.detectProject(summary, todo);
     summary = this.detectChecklist(summary, todo);
+
+    // Detect up to 3 tags
+    for (let ctrTags = 0; ctrTags < 3; ctrTags++) {
+      summary = this.detectTags(summary, todo);
+    }
+
     todo.title = summary.replace(/<div>|<\/div>|<br>|<\/br>|&nbsp;/g, '');
     todo.isOverdue = false;
     return todo;
@@ -330,6 +333,21 @@ export class RegexService {
       let regexChecklistAsterix: RegExp = /\*\s/g;
       let rawChecklistAsterix: RegExpExecArray = regexChecklistAsterix.exec(summary);
       todo.isChecklist = rawChecklistAsterix === null ? false : true;
+    } else {
+      todo.isChecklist = false;
+    }
+
+    return summary;
+  }
+
+  detectTags(summary: string, todo: Todo): string {
+    if (summary.match(/\@\w{2,15}\b/i)?.input) {
+      let regexTags: RegExp = /\@(\w{2,15})\b/g;
+      let rawTags: RegExpExecArray = regexTags.exec(summary);
+      if (rawTags != null) {
+        todo.tags.push(rawTags[1])
+        summary = summary.replace("@" + rawTags[1], '');
+      }
     } else {
       todo.isChecklist = false;
     }
