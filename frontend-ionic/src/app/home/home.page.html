@@ -6,7 +6,8 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title><img src="../../assets/icon/drawable-hdpi-icon.png" height="35px" width="35px" />
+    <ion-title>
+      <img src="../../assets/icon/drawable-hdpi-icon.png" height="35px" width="35px" />
     </ion-title>
 
     <ion-buttons slot="primary">
@@ -17,11 +18,13 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true" id="background">
   <div id="container">
     <div id="todayPane">{{today}}</div>
 
     <div id="buttonsPane" #buttonsPane>
+
       <ion-icon class="loader" [name]="refreshIcon" [style.background]="isSyncActive ? 'darkred' : '#2b2b2b'"
         (click)="refresh()"></ion-icon>
       <ion-icon name="eye" (click)="showHiddenProjects()"></ion-icon>
@@ -29,6 +32,7 @@
       <ion-icon name="search" (click)="switchSearchMode()"></ion-icon>
       <ion-icon name="help" [routerLink]="['/explain']"></ion-icon>
       <ion-icon name="log-out" (click)="logout()" id="open-modal"></ion-icon>
+
     </div>
 
     <div id="headingPane" (click)="showMenu()">{{heading}}</div>
@@ -189,31 +193,6 @@
           </p>
           <ion-button (click)="startDemoMode()">Start Demo Mode</ion-button>
         </div>
-        <!--     <div class="arcord">
-          <h2>Register - Free Account</h2>
-
-          <ion-input
-            aria-label="Name"
-            type="text"
-            [(ngModel)]="nameregisterfree"
-            placeholder="Name"
-          />
-          <ion-input
-            aria-label="Email"
-            type="email"
-            [(ngModel)]="emailregisterfree"
-            placeholder="E-Mail"
-          />
-          <ion-input
-            aria-label="Password"
-            type="password"
-            [(ngModel)]="passwordregisterfree"
-            placeholder="Password (12+ chars, use Password Manager)"
-          />
-          <ion-button (click)="registerFree()"
-            >Register for Free Account</ion-button
-          >
-        </div>-->
         <div class="arcord">
           <h2>Register - Selfhosted</h2>
 

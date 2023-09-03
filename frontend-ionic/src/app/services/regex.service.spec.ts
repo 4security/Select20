@@ -3,7 +3,7 @@ import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
 import { Storage } from '@ionic/storage';
 import { RegexService } from './regex.service';
-import { addDays, isFriday, isSaturday, isToday, parseISO } from 'date-fns';
+import { isFriday, isSaturday, isToday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { defaultCurrentProject } from '../config';
 import { Project } from '../models/project';
