@@ -1,8 +1,8 @@
-FROM composer:2.5.8 as build
+FROM composer:2.6.3 as build
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
-FROM php:8.2-fpm as production
+FROM laravelphp/vapor:php82 as production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
