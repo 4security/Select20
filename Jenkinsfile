@@ -22,7 +22,7 @@ pipeline {
                 stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'php composer install  --ignore-platform-reqs'
+                            sh 'php composer info'
                         }
                     }
                 }
