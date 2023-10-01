@@ -1,4 +1,4 @@
-FROM composer:2.6.3 as build
+FROM composer:2.6.4 as build
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
