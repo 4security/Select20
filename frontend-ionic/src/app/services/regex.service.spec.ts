@@ -275,8 +275,13 @@ describe('RegexService', () => {
   });
 
   it('detect tags at start', () => {
-    let result: Todo = service.extractKeywords('@pgei is greate', todo, projects, projectTitles);
+    let result: Todo = service.extractKeywords('@pgei is great', todo, projects, projectTitles);
     expect(result.tags[0] == "pgei").toBeTrue();
+  });
+
+  it('do not detect any tags', () => {
+    let result: Todo = service.extractKeywords('@~ @@@s @++ @k @a @ @waytolongtagihateittodoitcorrectly is great', todo, projects, projectTitles);
+    expect(result.tags.length == 0).toBeTrue();
   });
 
   it('strip day from summary', () => {
