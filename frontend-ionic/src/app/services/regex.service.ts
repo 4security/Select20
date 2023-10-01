@@ -205,7 +205,7 @@ export class RegexService {
           summary = summary.replace(/(\s?\d\d\.\d\d)/i, '');
         } catch (error) {
           this.messageService.show(
-            '🕐 Dates have a simple dot and timestamps  have double dot',
+            '🕐 Dates have a simple dot and timestamps have double dot',
             true
           );
         }

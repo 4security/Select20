@@ -3,7 +3,7 @@ import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
 import { Storage } from '@ionic/storage';
 import { RegexService } from './regex.service';
-import { addDays, isFriday, isSaturday, isToday, parseISO } from 'date-fns';
+import { isFriday, isSaturday, isToday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { defaultCurrentProject } from '../config';
 import { Project } from '../models/project';
@@ -191,6 +191,11 @@ describe('RegexService', () => {
     expect(result.duration == 60).toBeTrue();
   });
 
+  it('detect not dect negative duration', () => {
+    let result: Todo = service.extractKeywords('besser ist es -60m go home #kalle', todo, projects, projectTitles);
+    expect(result.duration == 60).toBeTrue();
+  });
+
   it('detect no duration - to big', () => {
     let result: Todo = service.extractKeywords('go home #kalle 1000m ', todo, projects, projectTitles);
     expect(result.duration == 30).toBeTrue();
@@ -229,6 +234,12 @@ describe('RegexService', () => {
   it('detect every 4 thu', () => {
     let result: Todo = service.extractKeywords('every 4 thu make it', todo, projects, projectTitles);
     expect(result.rrule.includes('FREQ=WEEKLY;INTERVAL=4;BYDAY=TH')).toBeTrue();
+  });
+
+  it('detect every 9 sunday', () => {
+    let result: Todo = service.extractKeywords('every 9 sunday @kalle https://example.com make it', todo, projects, projectTitles);
+    expect(result.rrule.includes('FREQ=WEEKLY;INTERVAL=9;BYDAY=SU')).toBeTrue();
+    expect(result.project.title == "kalle")
   });
 
   it('detect every -4 thu', () => {
@@ -282,6 +293,12 @@ describe('RegexService', () => {
   it('do not detect any tags', () => {
     let result: Todo = service.extractKeywords('@~ @@@s @++ @k @a @ @waytolongtagihateittodoitcorrectly is great', todo, projects, projectTitles);
     expect(result.tags.length == 0).toBeTrue();
+  });
+  
+  it('detect tags and project', () => {
+    let result: Todo = service.extractKeywords('#kalle @pgei is greate', todo, projects, projectTitles);
+    expect(result.tags[0] == "pgei").toBeTrue();
+    expect(result.project.title == "kalle")
   });
 
   it('strip day from summary', () => {
