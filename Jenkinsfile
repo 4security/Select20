@@ -15,14 +15,14 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'composer:2.5.8'
+                    image 'composer:2.6.4'
                 }
             }
             stages {
                 stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'php composer info'
+                            sh 'php composer install  --ignore-platform-reqs'
                         }
                     }
                 }
