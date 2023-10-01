@@ -212,55 +212,55 @@ export class RegexService {
       }
     }
 
-    if (summary.match(/\s[t|T]om\b|[t|T]om\s/i)?.input) {
+    if (summary.match(/\s[t|T]om(orrow)?\b|[t|T]om(orrow)?\s/i)?.input) {
       todo.due = this.formatIcsDate(addDays(Date.now(), 1));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[t|T]om/i, '');
     }
 
-    if (summary.match(/\s[t|T]od\b|[t|T]od\s/i)?.input) {
+    if (summary.match(/\s[t|T]od(ay)?\b|[t|T]od(ay)?\s/i)?.input) {
       todo.due = this.formatIcsDate(Date.now());
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[t|T]od/i, '');
     }
 
-    if (summary.match(/\s[m|M]on\b|[m|M]on\s/i)?.input) {
+    if (summary.match(/\s[m|M]on(day)?\b|[m|M]on(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextMonday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[m|M]on/i, '');
     }
 
-    if (summary.match(/\s[t|T]ue\b|[t|T]ue\s/i)?.input) {
+    if (summary.match(/\s[t|T]ue(sday)?\b|[t|T]ue(sday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextTuesday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[t|T]ue/i, '');
     }
 
-    if (summary.match(/\s[w|W]ed\b|[w|W]ed\s/i)?.input) {
+    if (summary.match(/\s[w|W]ed(nesday)?\b|[w|W]ed(nesday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextWednesday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[w|W]ed/i, '');
     }
 
-    if (summary.match(/\s[t|T]hu\b|[t|T]hu\s/i)?.input) {
+    if (summary.match(/\s[t|T]hu(rsday)?\b|[t|T]hu(rsday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextThursday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[t|T]hu/i, '');
     }
 
-    if (summary.match(/\s[F|f]ri\b|[F|f]ri\s/i)?.input) {
+    if (summary.match(/\s[F|f]ri(day)?\b|[F|f]ri(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextFriday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[F|f]ri/i, '');
     }
 
-    if (summary.match(/\s[s|S]at\b|[s|S]at\s/i)?.input) {
+    if (summary.match(/\s[s|S]at(urday)?\b|[s|S]at(urday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextSaturday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[s|S]at/i, '');
     }
 
-    if (summary.match(/\s[s|S]un\b|[s|S]un\s/i)?.input) {
+    if (summary.match(/\s[s|S]un(day)?\b|[s|S]un(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextSunday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
       summary = summary.replace(/\s?[s|S]un/i, '');
