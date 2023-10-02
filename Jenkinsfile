@@ -7,7 +7,7 @@ pipeline {
 
     agent {
         docker {
-            image 'busybox'
+            image 'laravelphp/vapor:php82'
         }
     }
 
@@ -15,14 +15,14 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'composer:2.6.4'
+                    image 'laravelphp/vapor:php82'
                 }
             }
             stages {
                 stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'php composer info'
+                            sh 'php composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction'
                         }
                     }
                 }
