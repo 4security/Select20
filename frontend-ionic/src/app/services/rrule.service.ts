@@ -35,7 +35,7 @@ export class RruleService {
 
     // Remove one day because nextXXXX() functions add further 7 days
 
-    if (savedNextEvent == 'nonextevent') {
+    if (savedNextEvent == 'NoNextEvent') {
       nextEvent = addDays(parseISO(todo.due), (intervallExtracted - 1) * 7);
     } else {
       nextEvent = addDays(

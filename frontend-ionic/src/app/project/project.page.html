@@ -1,7 +1,7 @@
 <ion-header> </ion-header>
 
 <ion-content>
-  <ion-button [routerLink]="['/home']"><ion-icon name="arrow-back"></ion-icon> Go back
+  <ion-button id="back" [routerLink]="['/home']"><ion-icon name="arrow-back"></ion-icon> Go back
   </ion-button>
   <ion-list>
     <ion-item>
@@ -21,7 +21,7 @@
 
     <ion-item>
       <ion-icon slot="start" name="chevron-forward"></ion-icon>
-      <ion-checkbox slot="end" aria-label="intendation" [(ngModel)]="intendation"></ion-checkbox>
+      <ion-checkbox slot="end" aria-label="position" [(ngModel)]="position"></ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="eye"></ion-icon>

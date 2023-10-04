@@ -33,8 +33,8 @@ export class ParserService {
   ) { }
 
   parseIcalToTodo(xmlRaw: string, rawTodo: string, project: Project): Todo {
-    let regexIcsid: RegExp = /\/([a-zA-Z0-9\-]{2,60})\.ics/g;
-    let icsid: RegExpExecArray = regexIcsid.exec(xmlRaw);
+    let regexIcsID: RegExp = /\/([a-zA-Z0-9\-]{2,60})\.ics/g;
+    let icsID: RegExpExecArray = regexIcsID.exec(xmlRaw);
 
     let regexUID: RegExp = /UID:(.{2,50})[;|\n]/g;
     let rawUid: RegExpExecArray = regexUID.exec(rawTodo);
@@ -73,24 +73,24 @@ export class ParserService {
 
     let todo: Todo = {
       uid: rawUid === null ? 'nouuid' : rawUid[1].toString(),
-      icsid: icsid[1].toString(),
+      icsID: icsID[1].toString(),
       title: rawSummary === null ? '4' : this.unEscapeForIcal(rawSummary[1]),
       priority: rawPriority === null ? 4 : parseInt(rawPriority[1]),
       description: rawDescription === null ? '' : rawDescription[1],
       created: rawCreated === null ? '' : rawCreated[1],
       modified: rawModified === null ? '' : rawModified[1],
-      startdate: rawStart === null ? '' : rawStart[1],
+      startDate: rawStart === null ? '' : rawStart[1],
       due: rawDue === null ? '' : rawDue[1],
       dueUNIX: 0,
       createdUNIX: 0,
       categories: rawCategories === null ? '' : rawCategories[1],
       status: rawStatus === null ? 'NEEDS-ACTION' : rawStatus[1],
       rrule: rawRrule === null ? '' : rawRrule[1],
-      precent: rawPercent === null ? 0 : parseInt(rawPercent[1]),
+      percent: rawPercent === null ? 0 : parseInt(rawPercent[1]),
       raw: rawTodo,
       related: rawRelated === null ? '' : rawRelated[1],
       project: project,
-      enddate: rawEnd === null ? '' : rawEnd[1],
+      endDate: rawEnd === null ? '' : rawEnd[1],
       duration: rawDuration === null ? 30 : parseInt(rawDuration[1]),
       isVisible: true,
       isChecklist: false,
@@ -136,7 +136,7 @@ export class ParserService {
       } else {
         try {
           todo.due = formatISO(
-            this.rruleService.calculateNextEvent(todo, 'nonextevent'),
+            this.rruleService.calculateNextEvent(todo, 'NoNextEvent'),
             { format: 'basic' }
           ).replace(/\+\d\d:00/, '');
         } catch (error) {
@@ -167,7 +167,7 @@ export class ParserService {
 
     if (
       todo.due != '' &&
-      isAfter(parseISO(todo.startdate), parseISO(todo.due))
+      isAfter(parseISO(todo.startDate), parseISO(todo.due))
     ) {
       this.messageService.show('🖋 Due before creation', true);
       return false;
@@ -188,11 +188,11 @@ export class ParserService {
       '\nLAST-MODIFIED:' +
       todo.modified +
       '\nDTSTAMP:' +
-      todo.startdate +
+      todo.startDate +
       '\nSUMMARY:' +
       this.escapeForIcal(todo.title) +
       '\nDTSTART:' +
-      todo.startdate;
+      todo.startDate;
 
     if (todo.due != '') {
       newRawTodo += '\nDUE:' + todo.due;
@@ -223,12 +223,12 @@ export class ParserService {
         .replace(/\;?ENDCAL=[0-9T]{15}/g, '')
         .replace(/\;?TACKS=[\,|\w]{2,50}/g, '')
         .replace(/\;?DURATION=[0-9]{1,4}/g, '');
-    if (todo.enddate != '') {
-      newRawTodo += ';ENDCAL=' + todo.enddate;
+    if (todo.endDate != '') {
+      newRawTodo += ';ENDCAL=' + todo.endDate;
     }
 
     // Default duration is 30 min if no end date is calculated
-    if (todo.enddate == '' && todo.due != '') {
+    if (todo.endDate == '' && todo.due != '') {
       newRawTodo +=
         ';ENDCAL=' +
         this.regexService.formatIcsDate(addMinutes(parseISO(todo.due), 30));
@@ -237,7 +237,7 @@ export class ParserService {
       newRawTodo += ';TACKS=' + todo.tags.join(",");
     }
 
-    if (todo.enddate != '') {
+    if (todo.endDate != '') {
       newRawTodo += ';DURATION=' + todo.duration;
     }
 
@@ -245,7 +245,7 @@ export class ParserService {
     return newRawTodo;
   }
 
-  createProjectPresist(projects: Project[]): string {
+  createProjectPersist(projects: Project[]): string {
     let projectsAsString = JSON.stringify(projects);
     let rawTodo: string =
       `BEGIN:VCALENDAR
@@ -253,7 +253,7 @@ VERSION:2.0
 PRODID:-//s20
 BEGIN:VTODO
 DTSTAMP:20220205T075620
-UID:s20-dontdeleteprojects
+UID:s20-doNotDeleteThis
 DESCRIPTION:` +
       projectsAsString +
       `
@@ -304,7 +304,7 @@ END:VCALENDAR`;
           .replace('/remote.php/dav/calendars/' + nextcloudUser, '')
           .replace('/', ''),
         colour: '',
-        intendation: 0,
+        position: 0,
         calendar: this.defaultCalendar,
         sorting: 100,
         visible: true,

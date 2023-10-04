@@ -25,7 +25,7 @@ export class ProjectPage {
   title: string = 'Project';
   sorting: number = 1;
   visible: boolean = true;
-  intendation: boolean = false;
+  position: boolean = false;
   calendar: Calendar = defaultCalendar;
 
   calendars: Calendar[];
@@ -49,7 +49,7 @@ export class ProjectPage {
     const storage = await this.storage.create();
     this._storage = storage;
     this._storage.get('calendars').then((calendars: Calendar[]) => {
-      this._storage.get('currentproject').then((project: any) => {
+      this._storage.get('currentProject').then((project: any) => {
         this.storage.get('projects').then((syncedProjects: Project[]) => {
           this.calendars = calendars;
           this.projects = syncedProjects;
@@ -65,10 +65,10 @@ export class ProjectPage {
             }
 
             this.sorting = project.sorting;
-            if (project.intendation == 0) {
-              this.intendation = false;
+            if (project.position == 0) {
+              this.position = false;
             } else {
-              this.intendation = true;
+              this.position = true;
             }
           } else {
             this.isANewProject = true;
@@ -82,14 +82,14 @@ export class ProjectPage {
     let objIndex: number = this.readFromForm();
     let now = this.regexService.formatIcsDate(Date.now());
     let projectsPersist: Todo = {
-      icsid: 's20-dontdeleteprojects',
-      uid: 's20-dontdeleteprojects',
+      icsID: 's20-doNotDeleteThis',
+      uid: 's20-doNotDeleteThis',
       title: 'default',
       priority: 4,
       description: JSON.stringify(this.projects),
       created: now,
       modified: now,
-      startdate: now,
+      startDate: now,
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
@@ -98,9 +98,9 @@ export class ProjectPage {
       raw: '',
       rrule: '',
       duration: 30,
-      precent: 0,
+      percent: 0,
       related: '',
-      enddate: '',
+      endDate: '',
       project: defaultProjects[0],
       isVisible: true,
       isChecklist: false,
@@ -151,10 +151,10 @@ export class ProjectPage {
     }
 
     this.projects[objIndex].sorting = this.sorting;
-    if (this.intendation) {
-      this.projects[objIndex].intendation = 1;
+    if (this.position) {
+      this.projects[objIndex].position = 1;
     } else {
-      this.projects[objIndex].intendation = 0;
+      this.projects[objIndex].position = 0;
     }
     if (this.visible) {
       this.projects[objIndex].visible = true;
@@ -190,7 +190,7 @@ export class ProjectPage {
       .pushTodo(
         defaultProjects[0],
         projectsPersist,
-        this.parserService.createProjectPresist(this.projects),
+        this.parserService.createProjectPersist(this.projects),
         false
       )
       .subscribe({

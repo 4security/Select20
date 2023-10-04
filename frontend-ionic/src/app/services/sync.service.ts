@@ -329,7 +329,7 @@ export class SyncService {
         this.tags = this.tags.concat(todo.tags);
 
         if (todo.status != 'COMPLETED') {
-          if (todo.icsid == 's20-dontdeleteprojects') {
+          if (todo.icsID == 's20-doNotDeleteThis') {
             try {
               this.projects = JSON.parse(todo.description);
               this.storage.set('projects', this.projects);

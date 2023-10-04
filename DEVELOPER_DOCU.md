@@ -8,7 +8,7 @@ Select20 based on Ionic (NPM) + Laravel (PHP) + MySQL (Database). The following 
 
 **Requirement: Nextcloud instance with API-Key (active calendar and todo app)**
 
-0. You debian based distrobutions needs some dependencies for Laravel:
+0. You debian based distributions needs some dependencies for Laravel:
 
 ```sh
 sudo  apt install zip unzip php-zip -y
@@ -106,7 +106,7 @@ Start Laravel on a remote server:
 php artisan optimize &&  php artisan route:clear &&  php artisan route:cache &&  php artisan config:clear &&  php artisan config:cache && php artisan serve --host=192.168.178.XX --port=8001
 ```
 
-Look for Swagger / API Docu - work in progress:
+Look for Swagger / API docu - work in progress:
 
 http://localhost:8001/api/documentation#/auth
 Show routes:

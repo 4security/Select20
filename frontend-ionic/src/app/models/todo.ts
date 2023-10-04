@@ -2,22 +2,22 @@ import { Project } from "./project";
 
 export class Todo {
   uid: string;
-  icsid: string;
+  icsID: string;
   title: string;
   priority: number;
   description: string;
   created: string;
   modified: string;
-  startdate: string;
+  startDate: string;
   due: string;
   dueUNIX: number;
   createdUNIX: number;
   categories: string;
   status: string;
   rrule: string;
-  precent: number;
+  percent: number;
   duration: number;
-  enddate: string;
+  endDate: string;
   raw: string;
   related: string;
   project: Project;
