@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'node:20.8.0-bullseye'
+                    image 'satantime/puppeteer-node:20-buster-slim'
                 }
             }
 
@@ -62,7 +62,6 @@ pipeline {
                 stage('Install NPM Dep') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'apt-get update -y && apt-get install libgbm-devt -y'
                             sh 'npm install -f'
                             sh 'npm install -g @angular/cli'
                             sh 'npm i -D puppeteer && node node_modules/puppeteer/install.mjs'
