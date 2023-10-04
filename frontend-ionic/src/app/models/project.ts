@@ -5,7 +5,7 @@ export class Project {
     url: string;
     calendar: Calendar;
     colour: string;
-    intendation: number;
+    position: number;
     sorting: number;
     visible: boolean;
     count: number;

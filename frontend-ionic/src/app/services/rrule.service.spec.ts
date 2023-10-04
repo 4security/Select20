@@ -20,22 +20,22 @@ describe('RruleService', () => {
     service = TestBed.inject(RruleService);
     regexService = TestBed.inject(RegexService);
     todo = {
-      icsid: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
+      icsID: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
       uid: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
       title: 'default',
       priority: 4,
       description: '',
       created: regexService.formatIcsDate(Date.now()),
       modified: regexService.formatIcsDate(Date.now()),
-      startdate: '',
+      startDate: '',
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
       categories: '',
       status: 'NEEDS-ACTION',
-      precent: 0,
+      percent: 0,
       raw: '',
-      enddate: '',
+      endDate: '',
       rrule: '',
       duration: 30,
       related: '',
@@ -50,22 +50,22 @@ describe('RruleService', () => {
 
   afterEach(() => {
     todo = {
-      icsid: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
+      icsID: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
       uid: 'ynlk93qe9pr9prk6rmi1ejblncb2huls7',
       title: 'default',
       priority: 4,
       description: '',
       created: regexService.formatIcsDate(Date.now()),
       modified: regexService.formatIcsDate(Date.now()),
-      startdate: '',
+      startDate: '',
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
       categories: '',
       status: 'NEEDS-ACTION',
-      precent: 0,
+      percent: 0,
       raw: '',
-      enddate: '',
+      endDate: '',
       rrule: '',
       duration: 30,
       related: '',
@@ -100,7 +100,7 @@ describe('RruleService', () => {
   it('every 3 wed with prev event', () => {
     todo.rrule = 'FREQ=WEEKLY;INTERVAL=3;BYDAY=WE';
     todo.due = '20220815T190000';
-    let date = service.calculateNextEvent(todo, 'nonextevent');
+    let date = service.calculateNextEvent(todo, 'NoNextEvent');
     expect(isSameDay(date, parseISO('20220831T190000'))).toBeTrue();
   });
 });

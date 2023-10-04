@@ -7,7 +7,7 @@ pipeline {
 
     agent {
         docker {
-            image 'busybox'
+            image 'laravelphp/vapor:php82'
         }
     }
 
@@ -15,14 +15,14 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'composer:2.6.4'
+                    image 'laravelphp/vapor:php82'
                 }
             }
             stages {
                 stage('Composer Install') {
                     steps {
                         dir('backend-laravel') {
-                            sh 'php composer info'
+                            sh 'php composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction'
                         }
                     }
                 }
@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'satantime/puppeteer-node:19-buster-slim'
+                    image 'satantime/puppeteer-node:20-buster-slim'
                 }
             }
 
@@ -64,7 +64,7 @@ pipeline {
                         dir('frontend-ionic') {
                             sh 'npm install -f'
                             sh 'npm install -g @angular/cli'
-                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.js'
+                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.mjs'
                         }
                     }
                 }

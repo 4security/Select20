@@ -34,7 +34,7 @@ export class RegexService {
     this.projectTitles = projectTitles;
     this.projects = projects;
 
-    summary = this.detectPrio(summary, todo);
+    summary = this.detectPriority(summary, todo);
     summary = this.detectRrule(summary, todo);
     summary = this.detectDay(summary, todo);
     summary = this.detectTime(summary, todo);
@@ -64,8 +64,8 @@ export class RegexService {
       summary.match(/[e|E]very\s\d?\s?(mon|tue|wed|thu|fri|sat|sun)/i)?.input
     ) {
       let regexEveryX: RegExp = /every\s(\d*)/g;
-      let raweveryX: RegExpExecArray = regexEveryX.exec(summary);
-      let everyX: string = raweveryX === null ? '1' : raweveryX[1];
+      let rawEveryX: RegExpExecArray = regexEveryX.exec(summary);
+      let everyX: string = rawEveryX === null ? '1' : rawEveryX[1];
       if (everyX.length > 0) {
         rrule += everyX;
       } else {
@@ -92,10 +92,10 @@ export class RegexService {
     return summary;
   }
 
-  detectPrio(summary: string, todo: Todo): string {
+  detectPriority(summary: string, todo: Todo): string {
     if (summary.match(/(\s[p|P]([1-4])|[p|P]([1-4]\s))/i)?.input) {
-      let regexPrio: RegExp = /[p|P]([1-4])/g;
-      let rawPriority: RegExpExecArray = regexPrio.exec(summary);
+      let regexPriority: RegExp = /[p|P]([1-4])/g;
+      let rawPriority: RegExpExecArray = regexPriority.exec(summary);
       todo.priority =
         rawPriority === null ? todo.priority : parseInt(rawPriority[1]);
       if (rawPriority != null) {
@@ -128,11 +128,11 @@ export class RegexService {
     if (summary.match(/(\s\d?\d\:\d\d|\d?\d\:\d\d\s)/i)?.input) {
       let regexTime: RegExp = /(\d?\d\:\d\d)/g;
       let time: RegExpExecArray = regexTime.exec(summary);
-      let extactedTime: string = time === null ? '' : time[1];
-      summary = summary.replace(extactedTime, '');
+      let concreteTime: string = time === null ? '' : time[1];
+      summary = summary.replace(concreteTime, '');
 
-      if (extactedTime.length == 4) {
-        extactedTime = '0' + extactedTime;
+      if (concreteTime.length == 4) {
+        concreteTime = '0' + concreteTime;
       }
 
       if (todo.due == '') {
@@ -141,7 +141,7 @@ export class RegexService {
 
       todo.due = todo.due.replace(
         /\d{6}$/i,
-        extactedTime.replace(':', '') + '00'
+        concreteTime.replace(':', '') + '00'
       );
     }
 
@@ -312,7 +312,7 @@ export class RegexService {
       todo.duration = rawDuration === null ? 30 : parseInt(rawDuration[1]);
 
       if (todo.due != '') {
-        todo.enddate = this.formatIcsDate(
+        todo.endDate = this.formatIcsDate(
           addMinutes(parseISO(todo.due), todo.duration)
         );
       }
@@ -330,7 +330,6 @@ export class RegexService {
 
   detectChecklist(summary: string, todo: Todo): string {
     if (summary.match(/^\*\s/i)?.input) {
-      console.log("delect star");
       todo.isChecklist = true;
     } else {
       todo.isChecklist = false;

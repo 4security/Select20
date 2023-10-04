@@ -45,7 +45,7 @@ export class NextcloudService {
       proxyDomain + '/auth/todo',
       JSON.stringify({
         list: project.url,
-        ics: todo.icsid,
+        ics: todo.icsID,
         calendar: saveCalendar.url,
         ical: rawTodo,
       }),
@@ -72,8 +72,8 @@ export class NextcloudService {
     username: string,
     email: string,
     password: string,
-    nextcloudurl: string,
-    nextcloudkey: string
+    nextcloudUrl: string,
+    nextcloudKey: string
   ) {
     return this.http.post(
       proxyDomain + '/auth/register',
@@ -81,8 +81,8 @@ export class NextcloudService {
         name: username,
         email: email,
         password: password,
-        nextcloudurl: nextcloudurl,
-        nextcloudkey: nextcloudkey,
+        nextcloudurl: nextcloudUrl,
+        nextcloudkey: nextcloudKey,
       }),
       {
         headers: this.getHeaders(),
@@ -117,10 +117,10 @@ export class NextcloudService {
     });
   }
 
-  getTodosFormNextcloud(projecturl: string) {
+  getTodosFormNextcloud(projectUrl: string) {
     return this.http.post(
       proxyDomain + '/auth/proxytodo',
-      JSON.stringify({ list: projecturl.replace('/', '') }),
+      JSON.stringify({ list: projectUrl.replace('/', '') }),
       {
         headers: this.getHeaders(),
         responseType: 'text',

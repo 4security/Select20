@@ -32,22 +32,22 @@ describe('RegexService', () => {
     projects = [java, horst, kalle];
 
     todo = {
-      icsid: '432432',
+      icsID: '432432',
       uid: '324324',
       title: 'default',
       priority: 4,
       description: '',
       created: service.formatIcsDate(Date.now()),
       modified: service.formatIcsDate(Date.now()),
-      startdate: '',
+      startDate: '',
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
       categories: '',
       status: 'NEEDS-ACTION',
-      precent: 0,
+      percent: 0,
       raw: '',
-      enddate: '',
+      endDate: '',
       rrule: '',
       duration: 30,
       related: '',
@@ -62,22 +62,22 @@ describe('RegexService', () => {
 
   afterEach(() => {
     todo = {
-      icsid: '432432',
+      icsID: '432432',
       uid: '324324',
       title: 'default',
       priority: 4,
       description: '',
       created: service.formatIcsDate(Date.now()),
       modified: service.formatIcsDate(Date.now()),
-      startdate: '',
+      startDate: '',
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
       categories: '',
       status: 'NEEDS-ACTION',
-      precent: 0,
+      percent: 0,
       raw: '',
-      enddate: '',
+      endDate: '',
       rrule: '',
       duration: 30,
       related: '',
@@ -294,7 +294,7 @@ describe('RegexService', () => {
     let result: Todo = service.extractKeywords('@~ @@@s @++ @k @a @ @waytolongtagihateittodoitcorrectly is great', todo, projects, projectTitles);
     expect(result.tags.length == 0).toBeTrue();
   });
-  
+
   it('detect tags and project', () => {
     let result: Todo = service.extractKeywords('#kalle @pgei is greate', todo, projects, projectTitles);
     expect(result.tags[0] == "pgei").toBeTrue();

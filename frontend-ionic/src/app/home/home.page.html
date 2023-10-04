@@ -38,7 +38,7 @@
     <div id="headingPane" (click)="showMenu()">{{heading}}</div>
 
     <div id="newTodoPane" *ngIf="!isFABShown">
-      <div id="supertask" *ngIf="isInSerachMode">
+      <div id="supertask" *ngIf="isInSearchMode">
         <div id="superTodoText">Start to search</div>
         <div id="closeSuperTask" (click)="switchSearchMode()">
           <ion-icon name="close"></ion-icon>
@@ -57,7 +57,7 @@
         </div>
         <div id="newTodoInputWrap">
           <input id="newTodoInput" [(ngModel)]="inputNewTodo" autocapitalize="none" (keyup.enter)="createNewTodo()"
-            #taskinput (keydown.control.ArrowDown)="switchSearchMode()" (ngModelChange)="search()" />
+            (keydown.control.ArrowDown)="switchSearchMode()" (ngModelChange)="search()" />
         </div>
         <div id="newTodoInputSubmit" (click)="createNewTodo()">
           <ion-icon name="send"></ion-icon>
@@ -67,7 +67,7 @@
 
     <div id="projectsPane" #projectPane>
       <div *ngFor="let project of projects">
-        <div class="project" [style.margin-left]="project.intendation == 1 ? '20px': '0px'"
+        <div class="project" [style.margin-left]="project.position == 1 ? '20px': '0px'"
           (click)="showProjectTodos(project)" *ngIf="project.visible">
           {{project.title}}
           <div id="edit" (click)="updateProject(project)">
@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <div id="mainPane" [style.top]="isInSerachMode || superTodoText != '' ? '232px' : '192px'">
+    <div id="mainPane" [style.top]="isInSearchMode || superTodoText != '' ? '232px' : '192px'">
       <div>
         <div *ngFor="let todo of todos">
           <div class="todo" *ngIf="(todo.isVisible)">
@@ -179,8 +179,8 @@
         <div class="arcord">
           <h2>Login</h2>
 
-          <ion-input aria-label="Email" type="email" [(ngModel)]="emaillogin" placeholder="E-Mail" />
-          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordlogin" placeholder="Password" />
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emailLogin" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordLogin" placeholder="Password" />
           <ion-button (click)="login()">Login</ion-button>
         </div>
         <div class="arcord">
@@ -188,18 +188,18 @@
 
           <p>
             Demo Mode automatically reset all todos. This only for testing the
-            sofware. If you want to permently use Select20 choose Register -
+            software. If you want to permanently use Select20 choose Register -
             Free Acount
           </p>
           <ion-button (click)="startDemoMode()">Start Demo Mode</ion-button>
         </div>
         <div class="arcord">
-          <h2>Register - Selfhosted</h2>
+          <h2>Register - Self Hosted</h2>
 
           <p>You can only this if you setup Select20 with the provided docker compose.</p>
-          <ion-input aria-label="Name" type="text" [(ngModel)]="nameregisterselfhosted" placeholder="Name" />
-          <ion-input aria-label="Email" type="email" [(ngModel)]="emailregisterselfhosted" placeholder="E-Mail" />
-          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordregisterselfhosted"
+          <ion-input aria-label="Name" type="text" [(ngModel)]="nameRegisterSelfHosted" placeholder="Name" />
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emailRegisterSelfHosted" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordRegisterSelfHosted"
             placeholder="Password (12+ chars, use Password Manager)" />
           <p>
             The Nextcloud-URL have the format
@@ -207,10 +207,10 @@
             API-Key is available in "Administration Settings > Security > Create
             new app password.
           </p>
-          <ion-input aria-label="Nextcloud-URL" type="text" [(ngModel)]="nextcloudurl" placeholder="Nextcloud-URL" />
-          <ion-input aria-label="Nextcloud-API-Key" type="text" [(ngModel)]="nextcloudapi"
+          <ion-input aria-label="Nextcloud-URL" type="text" [(ngModel)]="nextcloudUrl" placeholder="Nextcloud-URL" />
+          <ion-input aria-label="Nextcloud-API-Key" type="text" [(ngModel)]="nextcloudAPI"
             placeholder="Nextcloud-API-Key" />
-          <ion-button (click)="registerSelfhosted()">Setup Selfhosted Account</ion-button>
+          <ion-button (click)="registerSelfHosted()">Setup Self Hosted Account</ion-button>
         </div>
         <br /><br />
         <p>

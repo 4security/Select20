@@ -1,7 +1,7 @@
 import { Calendar } from "./models/calendar";
 import { Project } from "./models/project";
 
-const proxyDomain = "http://localhost/api";
+const proxyDomain = "https://s20api.lan/api";
 const defaultCalendar: Calendar = {
     name: "tasks",
     url: "tasks"
@@ -12,7 +12,7 @@ const defaultProjects: Project[] = [
         title: '📥 Inbox',
         url: 'inbox-1/',
         colour: '',
-        intendation: 0,
+        position: 0,
         calendar: defaultCalendar,
         sorting: 1,
         visible: true,
@@ -22,17 +22,17 @@ const defaultProjects: Project[] = [
         title: '🔴 Today',
         url: 'only-view',
         colour: '',
-        intendation: 0,
+        position: 0,
         calendar: defaultCalendar,
         sorting: 2,
         visible: true,
         count: 0,
     },
     {
-        title: '📅 Upcomming',
+        title: '📅 Upcoming',
         url: 'only-view',
         colour: '',
-        intendation: 0,
+        position: 0,
         calendar: defaultCalendar,
         sorting: 3,
         visible: true,
@@ -43,7 +43,7 @@ const defaultCurrentProject: Project = {
     title: '🔴 Today',
     url: 'only-view',
     colour: '',
-    intendation: 0,
+    position: 0,
     calendar: defaultCalendar,
     sorting: 2,
     visible: true,

@@ -38,7 +38,7 @@ export class HomePage implements OnInit {
   todosCopy: Todo[] = [];
   relatedTodos: Todo[] = [];
   lastChangedTodo: Todo;
-  supertaskTodo: Todo;
+  superTaskTodo: Todo;
   lastSubmittedTodo: string = '';
   superTodoText: string = '';
   refreshIcon: string = 'refresh';
@@ -63,22 +63,22 @@ export class HomePage implements OnInit {
   isRefreshInProgress: boolean = false;
   isMenuVisible: boolean = false;
   isSyncActive: boolean = false;
-  isInSerachMode: boolean = false;
+  isInSearchMode: boolean = false;
 
   indexOfLastChangedTodo: number;
   _storage: Storage | null = null;
   syncTest;
 
-  emaillogin: string = "";
-  passwordlogin: string = "";
-  nameregisterfree: string = "";
-  emailregisterfree: string = "";
-  passwordregisterfree: string = "";
-  nameregisterselfhosted: string = "";
-  emailregisterselfhosted: string = "";
-  passwordregisterselfhosted: string = "";
-  nextcloudurl: string = "";
-  nextcloudapi: string = "";
+  emailLogin: string = "";
+  passwordLogin: string = "";
+  nameRegisterFree: string = "";
+  emailRegisterFree: string = "";
+  passwordRegisterFree: string = "";
+  nameRegisterSelfHosted: string = "";
+  emailRegisterSelfHosted: string = "";
+  passwordRegisterSelfHosted: string = "";
+  nextcloudUrl: string = "";
+  nextcloudAPI: string = "";
 
   @ViewChild(IonModal) registerModal: IonModal;
   demoMode: boolean = false;
@@ -228,22 +228,22 @@ export class HomePage implements OnInit {
 
     // Allow creation of today task at 00:00 --> now() - 1
     let todo: Todo = {
-      icsid: newUid,
+      icsID: newUid,
       uid: newUid,
       title: 'default',
       priority: 4,
       description: '',
       created: this.regexService.formatIcsDate(Date.now()),
       modified: this.regexService.formatIcsDate(Date.now()),
-      startdate: this.regexService.formatIcsDate(addDays(Date.now(), -1)),
+      startDate: this.regexService.formatIcsDate(addDays(Date.now(), -1)),
       due: '',
       dueUNIX: 0,
       createdUNIX: 0,
       categories: '',
       status: 'NEEDS-ACTION',
-      precent: 0,
+      percent: 0,
       raw: '',
-      enddate: '',
+      endDate: '',
       rrule: '',
       duration: 30,
       related: '',
@@ -258,8 +258,8 @@ export class HomePage implements OnInit {
 
     if (this.parserService.checkTodoForLogic(todo)) {
       if (this.superTodoText != '') {
-        let indexSuperTodo: number = this.todos.indexOf(this.supertaskTodo);
-        todo.related = this.supertaskTodo.uid;
+        let indexSuperTodo: number = this.todos.indexOf(this.superTaskTodo);
+        todo.related = this.superTaskTodo.uid;
         this.todos[indexSuperTodo].subs.push(todo);
       } else {
         this.todos.unshift(newTodo);
@@ -271,7 +271,7 @@ export class HomePage implements OnInit {
   }
 
   toggleTodo(todo: Todo) {
-    let superTodo = this.todos.find((ctrtodo) => ctrtodo.uid == todo.related);
+    let superTodo = this.todos.find((ctrTodo) => ctrTodo.uid == todo.related);
     this.indexOfLastChangedTodo = this.todos.indexOf(todo);
     this.lastChangedTodo = { ...todo };
 
@@ -287,9 +287,9 @@ export class HomePage implements OnInit {
       // Recurring rules cannot be toggled
       if (todo.rrule != '') {
         this.messageService.show('👍 Calculate next event of ' + todo.title);
-        this.toogleRrule(todo, this.indexOfLastChangedTodo);
+        this.toggleRrule(todo, this.indexOfLastChangedTodo);
 
-        // Toogle for normal todos
+        // Toggle for normal todos
       } else {
         this.messageService.show('👍 Finish todo ' + todo.title);
 
@@ -353,23 +353,23 @@ export class HomePage implements OnInit {
   }
 
   addProject() {
-    this.storage.set('currentproject', "");
+    this.storage.set('currentProject', "");
     this.router.navigate(['/project']);
 
   }
 
-  toogleRrule(todo: Todo, indexOfTodo: number): void {
+  toggleRrule(todo: Todo, indexOfTodo: number): void {
     let regexNextEvent = /\;?NEXTEVENT=([0-9T]{15})/g;
     let rawNextEvent = regexNextEvent.exec(todo.description);
-    let mynextEvent;
+    let theNextEvent;
 
     if (rawNextEvent !== null) {
-      mynextEvent = this.rruleService.calculateNextEvent(todo, rawNextEvent[1]);
+      theNextEvent = this.rruleService.calculateNextEvent(todo, rawNextEvent[1]);
     } else {
-      mynextEvent = this.rruleService.calculateNextEvent(todo, 'nonextevent');
+      theNextEvent = this.rruleService.calculateNextEvent(todo, 'NoNextEvent');
     }
 
-    todo.due = formatISO(mynextEvent, { format: 'basic' }).replace(
+    todo.due = formatISO(theNextEvent, { format: 'basic' }).replace(
       /\+\d\d\:00/g,
       ''
     );
@@ -402,7 +402,7 @@ export class HomePage implements OnInit {
         /;NEXTEVENT=[^;]+/g,
         ''
       );
-      this.toogleRrule(extractedTodo, this.indexOfLastChangedTodo);
+      this.toggleRrule(extractedTodo, this.indexOfLastChangedTodo);
     }
 
     if (this.parserService.checkTodoForLogic(extractedTodo)) {
@@ -434,17 +434,17 @@ export class HomePage implements OnInit {
       this.showNewInput();
     }
     this.superTodoText = todo.title;
-    this.supertaskTodo = todo;
+    this.superTaskTodo = todo;
   }
 
   leaveSubTaskMode(): void {
     this.superTodoText = '';
-    this.supertaskTodo = null;
+    this.superTaskTodo = null;
   }
 
   updateTodo(todo: Todo, project: Project, isDeleted: boolean = false) {
     if (this.superTodoText != '') {
-      todo.related = this.supertaskTodo.uid;
+      todo.related = this.superTaskTodo.uid;
     }
     if (todo.rrule != undefined && todo.rrule.length > 5 && todo.due == '') {
       todo.due = this.regexService
@@ -477,7 +477,7 @@ export class HomePage implements OnInit {
                 this.messageService.show('💾 Saved');
               } else {
                 this.messageService.show(
-                  '💾 Saved + 📅 Sheduled in ' +
+                  '💾 Saved + 📅 Scheduled in ' +
                   project.calendar.name +
                   ' for ' +
                   todo.duration +
@@ -546,20 +546,20 @@ export class HomePage implements OnInit {
     this.currentProject = project;
 
     this.leaveSubTaskMode();
-    if (this.isInSerachMode) {
+    if (this.isInSearchMode) {
       this.leaveSearchMode();
     }
     if (this.relatedTodos != null) {
       this.relatedTodos.forEach((relatedTodo) => {
         if (relatedTodo.due != '') {
           this.todos = this.todos.filter(
-            (data) => data.icsid != relatedTodo.icsid
+            (data) => data.icsID != relatedTodo.icsID
           );
           switch (project.title) {
             case '🔴 Today':
               this.todos.push(relatedTodo);
               break;
-            case '📅 Upcomming':
+            case '📅 Upcoming':
               this.todos.push(relatedTodo);
               break;
             default:
@@ -582,7 +582,7 @@ export class HomePage implements OnInit {
               todo.isVisible = false;
             }
             break;
-          case '📅 Upcomming':
+          case '📅 Upcoming':
             if (
               isAfter(parseISO(todo.due), Date.now()) &&
               todo.due != '' &&
@@ -608,11 +608,11 @@ export class HomePage implements OnInit {
       case '🔴 Today':
         this.sortByTime();
         break;
-      case '📅 Upcomming':
+      case '📅 Upcoming':
         this.sortByTime();
         break;
       default:
-        this.sortByPrio();
+        this.sortByPriority();
         break;
     }
 
@@ -630,9 +630,9 @@ export class HomePage implements OnInit {
     }
   }
 
-  sortByPrio() {
+  sortByPriority() {
     if (this.todos != null) {
-      // Sort first for prioirty than alphabetic
+      // Sort first for priority than alphabetic
       this.todos.sort((a, b) => {
         return a.priority - b.priority || b.createdUNIX - a.createdUNIX;
       });
@@ -640,7 +640,7 @@ export class HomePage implements OnInit {
   }
 
   updateProject(project: Project): void {
-    this.storage.set('currentproject', project);
+    this.storage.set('currentProject', project);
     this.router.navigate(['/project']);
   }
 
@@ -663,7 +663,7 @@ export class HomePage implements OnInit {
 
               todo.due = '';
               todo.rrule = '';
-              todo.enddate = '';
+              todo.endDate = '';
               todo.duration = 30;
               todo.description = todo.description.replace(regexEnd, '');
               this.updateTodo(todo, this.currentProject, false);
@@ -741,8 +741,8 @@ export class HomePage implements OnInit {
   }
 
   switchSearchMode() {
-    this.isInSerachMode = !this.isInSerachMode;
-    if (!this.isInSerachMode) {
+    this.isInSearchMode = !this.isInSearchMode;
+    if (!this.isInSearchMode) {
       this.getTodosFromCache();
       this.showProjectTodos(this.currentProject);
     } else {
@@ -759,7 +759,7 @@ export class HomePage implements OnInit {
   }
 
   search(): void {
-    if (this.isInSerachMode) {
+    if (this.isInSearchMode) {
       let term = this.inputNewTodo;
       this.todosCopy.forEach((todo) => {
         todo.isVisible = true;
@@ -771,7 +771,7 @@ export class HomePage implements OnInit {
   }
 
   login() {
-    this.nextcloud.login(this.emaillogin, this.passwordlogin).subscribe({
+    this.nextcloud.login(this.emailLogin, this.passwordLogin).subscribe({
       next: (loginAnswer: string) => {
         console.log('✅ Credentials correct', loginAnswer);
         this.sync();
@@ -799,7 +799,7 @@ export class HomePage implements OnInit {
       this.calendars.push(calendar);
     });
     this.storage.set("projects", this.projects);
-    this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcomming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
+    this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcoming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
     this.storage.set('calendars', this.calendars);
     this.registerModal.dismiss();
     this.todos = [];
@@ -811,14 +811,14 @@ export class HomePage implements OnInit {
 
   }
 
-  registerSelfhosted() {
+  registerSelfHosted() {
     this.nextcloud
       .register(
-        this.nameregisterselfhosted,
-        this.emailregisterselfhosted,
-        this.passwordregisterselfhosted,
-        this.nextcloudurl,
-        this.nextcloudapi
+        this.nameRegisterSelfHosted,
+        this.emailRegisterSelfHosted,
+        this.passwordRegisterSelfHosted,
+        this.nextcloudUrl,
+        this.nextcloudAPI
       )
       .subscribe({
         next: (loginAnswer: string) => {
