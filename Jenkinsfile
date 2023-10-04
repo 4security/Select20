@@ -54,7 +54,7 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'satantime/puppeteer-node:19-buster-slim'
+                    image 'satantime/puppeteer-node:20-buster-slim'
                 }
             }
 
