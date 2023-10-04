@@ -64,7 +64,6 @@ pipeline {
                         dir('frontend-ionic') {
                             sh 'npm install -f'
                             sh 'npm install -g @angular/cli'
-                            sh 'npm i -D puppeteer && node node_modules/puppeteer/install.js'
                         }
                     }
                 }
