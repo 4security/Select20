@@ -5,8 +5,7 @@
   <br>
 </h1>
 
-<h4 align="center">The todo app Select20 leverages language recognition to manage tasks more efficently. The distraction-free and blazing fast app supports offline usage and compatibility to CalDav.</h4>
-
+<h4 align="center">The todo app Select20 leverages language recognition to manage tasks more efficiently. The distraction-free and blazing fast app supports offline usage and compatibility to CalDav.</h4>
 
 <p align="center">
   <a href="#why-should-i-use-select20">Key Features</a> •
@@ -40,6 +39,7 @@ docker compose up
 ```sh
 docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan jwt:secret -f && php artisan key:generate"
 ```
+
 5. Restart docker compose --> `Strg + c` and `docker compose up` again
 
 6. Open http://localhost:8081
@@ -50,14 +50,14 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 
 - p1,p2,p3,p4 --> Priority, p1 is the highest - colored red circle
 - #projectname --> Automatically moves the todo in the correct project
-- 30.12.2023 --> Full date with day.month.year - separted by dots
+- 30.12.2023 --> Full date with day.month.year - separated by dots
 - 30.12 --> Short date with day.month the software assumes the current year
-- 90m --> Todos can be sheduled with duration. Need for start due date.
+- 90m --> Todos can be scheduled with duration. Need for start due date.
 - every mon 19:00 --> Add recurring rule with time. Weekly rhythms are possible.
 - every 4 sun 10:00 --> Recurring rule on every X weeks
-- * Shopping --> Star --> Checklist with subtodos that will restore on reload.
+- - Shopping --> Star --> Checklist with sub todos that will restore on reload.
 - https://example.com --> Add links and a short link is created (hover needed)
-  
+
 <img src="images/mobile.png" alt="drawing" width="300"/>
 
 ### Support for hyper dynamic todos
@@ -80,7 +80,7 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 - delete recurring rule / end to do forever
 - auto create calendar entry
   - when due date is set
-  - connect calendars with todolists
+  - connect calendars with todo lists
 - create todos in other projects
   - with #projectname
   - temp display in current project
@@ -92,18 +92,18 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 - default project: today / Upcoming / Inbox
 - indentation for sub projects
 - sorting
-- connect callendar with todo
+- connect calendar with todo
 
 - todo will not crate a calendar entry if ...
   - **!nocal** expression
   - day tasks (no time)
   - no due set
-  - todos with a reccurring rule
+  - todos with a recurring rule
 - project settings synced over devices
 
 ### Security first features!
 
-- Selfhosted - no online access needed
+- Self-hosted - no online access needed
 - Never delete a todo
 - Force TLS (HTTPs) with PWA
 - CSRF protection
@@ -126,11 +126,11 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 - Offline Support
   - toggling, editing and adding todos
   - Counter for pending changes
-- Login / Register (muliple instances)
+- Login / Register (multiple instances)
 
 ## Usage
 
-- Start to type and use the keywords #, p1, dates, rythms
+- Start to type and use the keywords #, p1, dates, rhythm
 - Shift todos between project by typing #projectname at the end. The todo will shifted visually on the next project change / reload
 - Undo finishing todos by using the Undo-button at top right (next to reload)
 - Change the connected calendar per project by using the edit button
@@ -157,7 +157,7 @@ Not-to-do - Simplify it:
 
 Edit the todo and add #projectname at the end and hit enter.
 
-### How can add subtodos?
+### How can add sub todos?
 
 Click on the add symbol during hovering a todo.
 
@@ -179,7 +179,7 @@ Use the back error beside the reload symbol.
 
 ### Are my todos deleted if I tick them?
 
-Todos are only hidden. You can restore todos manually with the history or Nextcloud database. 
+Todos are only hidden. You can restore todos manually with the history or Nextcloud database.
 
 ## Why did I code this todo app?
 
