@@ -218,8 +218,8 @@ export class HomePage implements OnInit {
     this.isFABShown = !this.isFABShown;
   }
 
-  createNewTodo(): void {
-    let text = this.regexService.stripHtml(this.inputNewTodo);
+  createNewTodo(summary): void {
+    let text = this.regexService.stripHtml(summary.target.innerHTML);
 
     let newUid: string =
       Math.random().toString(36).substring(2, 15) +
@@ -266,7 +266,7 @@ export class HomePage implements OnInit {
       }
       this._storage.set('todos', this.todos);
       this.updateTodo(newTodo, todo.project);
-      this.inputNewTodo = '';
+      summary.target.innerHTML = '';
     }
   }
 
@@ -758,9 +758,9 @@ export class HomePage implements OnInit {
     this.showProjectTodos(this.currentProject);
   }
 
-  search(): void {
+  search(summary): void {
     if (this.isInSearchMode) {
-      let term = this.inputNewTodo;
+      let term = this.regexService.stripHtml(summary.target.innerHTML);
       this.todosCopy.forEach((todo) => {
         todo.isVisible = true;
       });
