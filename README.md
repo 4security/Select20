@@ -148,7 +148,7 @@ docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan 
 Not-to-do - Simplify it:
 
 - Sub-sub-todos
-- dropdowns and lot of buttons
+- dropdowns and lots of buttons
 - datepicker
 
 ## FAQ

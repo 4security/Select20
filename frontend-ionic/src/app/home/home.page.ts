@@ -483,7 +483,7 @@ export class HomePage implements OnInit {
                 todo.due == ''
               ) {
                 this.messageService.show('💾 Saved');
-                var audio = new Audio('assets/audio/confirm.mp3');
+                var audio = new Audio('assets/audio/check.mp3');
                 audio.play();
               } else {
                 this.messageService.show(

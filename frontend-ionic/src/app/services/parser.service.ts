@@ -102,7 +102,7 @@ export class ParserService {
       todo.isChecklist = true;
     }
     todo.description = todo.description
-      .replace(/\;?ENDCAL=[0-9T]{15}/g, '')
+      .replace(/\\*\;?ENDCAL=[0-9T]{15}/g, '')
       .replace(/\;?TACKS=[\,|\w]{2,50}/g, '')
       .replace(/\;?DURATION=[0-9]{1,4}/g, '');
     this.showNextEventOfRrule(todo);
@@ -220,7 +220,7 @@ export class ParserService {
     newRawTodo +=
       '\nDESCRIPTION:' +
       todo.description
-        .replace(/\;?ENDCAL=[0-9T]{15}/g, '')
+        .replace(/\\*\;?ENDCAL=[0-9T]{15}/g, '')
         .replace(/\;?TACKS=[\,|\w]{2,50}/g, '')
         .replace(/\;?DURATION=[0-9]{1,4}/g, '');
     if (todo.endDate != '') {
