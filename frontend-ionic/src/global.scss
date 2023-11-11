@@ -31,3 +31,8 @@ ion-header.md {
         height: 76px;
     }
 }
+
+textarea:focus,
+input:focus, .title:focus, #newTodoInput:focus {
+  outline: none;
+}

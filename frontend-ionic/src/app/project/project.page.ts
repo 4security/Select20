@@ -129,6 +129,8 @@ export class ProjectPage {
       next: (deleteAnswer: string) => {
         this.messageService.show('💾 Project deleted');
         this.saveProjectsInInboxTodo(projectsPersist);
+        var audio = new Audio('assets/audio/confirm.mp3');
+        audio.play();
       },
       error: (error) => {
         this.messageService.show('⭕ Project cannot be deleted saved');
@@ -176,6 +178,8 @@ export class ProjectPage {
       next: (data) => {
         this.messageService.show('💾 New Project saved');
         this.saveProjectsInInboxTodo(projectsPersist);
+        var audio = new Audio('assets/audio/confirm.mp3');
+        audio.play();
       },
       error: (error) => {
         this.messageService.show('⭕ New Project not saved');
@@ -202,6 +206,8 @@ export class ProjectPage {
                 state: { projects: this.projects },
               });
             });
+            var audio = new Audio('assets/audio/confirm.mp3');
+            audio.play();
           } else {
             this.messageService.show('⭕ Sabre Error Project not saved');
             console.error("⭕ Sabre Error Project not saved", answerProjectSaved);

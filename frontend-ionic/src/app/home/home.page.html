@@ -56,11 +56,9 @@
           <ion-icon name="close" (click)="showNewInput()"></ion-icon>
         </div>
         <div id="newTodoInputWrap">
-          <input id="newTodoInput" [(ngModel)]="inputNewTodo" autocapitalize="none" (keyup.enter)="createNewTodo()"
-            (keydown.control.ArrowDown)="switchSearchMode()" (ngModelChange)="search()" />
-        </div>
-        <div id="newTodoInputSubmit" (click)="createNewTodo()">
-          <ion-icon name="send"></ion-icon>
+          <div id="newTodoInput" contenteditable="true" autocapitalize="none" autocapitalize="none"
+            (keyup.enter)="createNewTodo($event)" (keydown.control.ArrowDown)="switchSearchMode()"
+            (keyup)="search($event)"></div>
         </div>
       </div>
     </div>

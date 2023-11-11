@@ -218,8 +218,8 @@ export class HomePage implements OnInit {
     this.isFABShown = !this.isFABShown;
   }
 
-  createNewTodo(): void {
-    let text = this.regexService.stripHtml(this.inputNewTodo);
+  createNewTodo(summary): void {
+    let text = this.regexService.stripHtml(summary.target.innerHTML);
 
     let newUid: string =
       Math.random().toString(36).substring(2, 15) +
@@ -255,7 +255,7 @@ export class HomePage implements OnInit {
       subs: [],
     };
     let newTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
-
+    summary.target.innerHTML = this.regexService.stripHtml(summary.target.innerHTML);
     if (this.parserService.checkTodoForLogic(todo)) {
       if (this.superTodoText != '') {
         let indexSuperTodo: number = this.todos.indexOf(this.superTaskTodo);
@@ -266,8 +266,9 @@ export class HomePage implements OnInit {
       }
       this._storage.set('todos', this.todos);
       this.updateTodo(newTodo, todo.project);
-      this.inputNewTodo = '';
+      summary.target.innerHTML = '';
     }
+
   }
 
   toggleTodo(todo: Todo) {
@@ -278,11 +279,15 @@ export class HomePage implements OnInit {
     // Cannot remove of checklists
     if (todo.isChecklist) {
       this.messageService.show('🔏 Checklists stay - ' + todo.title, true);
+      var audio = new Audio('assets/audio/error.mp3');
+      audio.play();
 
       // Hide todos in checklist and do not update in backend
     } else if (superTodo != null && superTodo.isChecklist) {
       this.messageService.show('🙈 Hide checklist todo');
       todo.isVisible = false;
+      var audio = new Audio('assets/audio/check.mp3');
+      audio.play();
     } else {
       // Recurring rules cannot be toggled
       if (todo.rrule != '') {
@@ -292,7 +297,8 @@ export class HomePage implements OnInit {
         // Toggle for normal todos
       } else {
         this.messageService.show('👍 Finish todo ' + todo.title);
-
+        var audio = new Audio('assets/audio/check.mp3');
+        audio.play();
         todo.status = 'COMPLETED';
         todo.isVisible = false;
 
@@ -323,6 +329,8 @@ export class HomePage implements OnInit {
             if (todoAnswer == "") {
               this.messageService.show('💾 Undo Change');
               this.todos[this.indexOfLastChangedTodo] = this.lastChangedTodo;
+              var audio = new Audio('assets/audio/confirm.mp3');
+              audio.play();
             } else {
               this.messageService.show('Sabre Error Undo Change' + todoAnswer, true);
               console.error(
@@ -475,6 +483,8 @@ export class HomePage implements OnInit {
                 todo.due == ''
               ) {
                 this.messageService.show('💾 Saved');
+                var audio = new Audio('assets/audio/check.mp3');
+                audio.play();
               } else {
                 this.messageService.show(
                   '💾 Saved + 📅 Scheduled in ' +
@@ -483,7 +493,10 @@ export class HomePage implements OnInit {
                   todo.duration +
                   'm'
                 );
+                var audio = new Audio('assets/audio/confirm.mp3');
+                audio.play();
               }
+
               this.parserService.showNextEventOfRrule(todo);
               this._storage.set('todos', this.todos);
               return true;
@@ -758,9 +771,9 @@ export class HomePage implements OnInit {
     this.showProjectTodos(this.currentProject);
   }
 
-  search(): void {
+  search(summary): void {
     if (this.isInSearchMode) {
-      let term = this.inputNewTodo;
+      let term = this.regexService.stripHtml(summary.target.innerHTML);
       this.todosCopy.forEach((todo) => {
         todo.isVisible = true;
       });
@@ -776,6 +789,8 @@ export class HomePage implements OnInit {
         console.log('✅ Credentials correct', loginAnswer);
         this.sync();
         this.registerModal.dismiss();
+        var audio = new Audio('assets/audio/check.mp3');
+        audio.play();
       },
       error: (error) => {
         console.error('Credentials not correct', JSON.stringify(error));
@@ -825,6 +840,8 @@ export class HomePage implements OnInit {
           this.sync();
           console.log("Login Self hosted worked", loginAnswer)
           this.messageService.show("Register successful. Login now!");
+          var audio = new Audio('assets/audio/check.mp3');
+          audio.play();
         },
         error: (error) => {
           console.error("Self hosting login failed", error)
