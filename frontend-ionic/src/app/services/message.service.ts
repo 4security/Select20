@@ -27,9 +27,5 @@ export class MessageService {
 
 
     }
-    if (isError) {
-      var audio = new Audio('assets/audio/error.mp3');
-      audio.play();
-    }
   }
 }
