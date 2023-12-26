@@ -3,7 +3,6 @@
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>S20</name>
     <description>SelectTheImpactfull20</description>
-    <author email="info@calc-o-meter.de" href="http://ionicframework.com/">Steffen Lippke</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

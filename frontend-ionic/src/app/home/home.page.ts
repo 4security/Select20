@@ -12,7 +12,7 @@ import { Storage } from '@ionic/storage-angular';
 import { ParserService } from '../services/parser.service';
 import { RegexService } from '../services/regex.service';
 import { RruleService } from '../services/rrule.service';
-import formatISO from 'date-fns/formatISO';
+import { formatISO } from 'date-fns/formatISO';
 import { AlertController, IonModal } from '@ionic/angular';
 import { Todo } from '../models/todo';
 import { Project } from '../models/project';
@@ -294,7 +294,7 @@ export class HomePage implements OnInit {
         // Toggle for normal todos
       } else {
         this.messageService.show('👍 Finish todo ' + todo.title);
-;
+        ;
         todo.status = 'COMPLETED';
         todo.isVisible = false;
 
