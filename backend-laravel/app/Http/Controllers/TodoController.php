@@ -68,7 +68,7 @@ class TodoController extends Controller
         $this->saveHistory("View habit-matrix");
 
         $user_id = $user->id;
-        $data = DB::select(DB::raw($sql), array('userid' => $user_id));
+        $data = DB::select(DB::raw($sql)->getValue(DB::connection()->getQueryGrammar(), array('userid' => $user_id)));
         return response($data);
     }
 

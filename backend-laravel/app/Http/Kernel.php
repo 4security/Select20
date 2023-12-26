@@ -9,9 +9,8 @@ class Kernel extends HttpKernel
 
     // no cors here and avoid duplicate use of cors class import
     protected $middleware = [
-        \Fruitcake\Cors\HandleCors::class,
         \Illuminate\Http\Middleware\HandleCors::class,
-        \App\Http\Middleware\TrustProxies::class,
+        \Illuminate\Http\Middleware\TrustProxies::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -41,6 +40,7 @@ class Kernel extends HttpKernel
         ],
         'auth.api' => [
             \App\Http\Middleware\AddAuthTokenHeader::class,
+            'throttle:60,1',
             'auth:api',
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         ],
