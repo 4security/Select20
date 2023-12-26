@@ -22,7 +22,7 @@ sudo apt update
 2. Install dependencies for Laravel:
 
 ```sh
-sudo apt-get install php8.2 libapache2-mod-php8.2 php8.2-common php8.2-gd php8.2-mysql php8.2-curl php8.2-intl php8.2-xsl php8.2-mbstring php8.2-zip php8.2-bcmath php8.2-soap php-xdebug php-imagick
+sudo apt-get install php8.3 libapache2-mod-php8.3 php8.3-common php8.3-gd php8.3-mysql php8.3-curl php8.3-intl php8.3-xsl php8.3-mbstring php8.3-zip php8.3-bcmath php8.3-soap php-xdebug php-imagick
 wget -O composer-setup.php https://getcomposer.org/installer
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 cd backend

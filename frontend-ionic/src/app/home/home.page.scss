@@ -23,6 +23,33 @@ ion-title {
     background: grey;
 }
 
+@keyframes strike {
+    0% {
+        transform-origin: 0% 50%;
+        transform: scaleX(0);
+    }
+
+    100% {
+        transform-origin: 0% 50%;
+        transform: scaleX(1);
+    }
+}
+
+.todo {
+    position: relative;
+}
+
+.tickboxcage:hover:after {
+    content: ' ';
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    width: 90%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.70);
+    animation: strike .55s ease-in-out forwards;
+}
+
 .loader .icon-inner {
     animation: rotation 2s infinite linear;
 }
@@ -36,7 +63,6 @@ ion-title {
         transform: rotate(359deg);
     }
 }
-
 
 .project {
     padding: 7px !important;
@@ -101,6 +127,7 @@ ion-title {
 }
 
 .title {
+
     display: inline-block;
     padding: 5px;
     border-radius: 5px;

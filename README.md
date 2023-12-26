@@ -189,12 +189,6 @@ The best todo app I tested was Todoist ... but I cannot self host the service an
 
 Select the 20 % of the todos that bring the most impact for your life and work. The other 80 % of todos you can archive ... and relax. The product name name Select20 is reminder: Do not finish to 1000 of todos everyday. Instead pick the impactful ones.
 
-## Audio Credits
-
-- [Leszek_Szary](https://freesound.org/people/Leszek_Szary/sounds/171671/), Creative Commons 0, check.mp3
-- [ecfike](https://freesound.org/people/ecfike/sounds/135125/), Creative Commons 0, error.mp3
-- [metalfortress](https://freesound.org/people/metalfortress/sounds/611800/), Creative Commons 0, confirm.mp3
-
 ## License
 
 GNU GENERAL PUBLIC LICENSE Version 2

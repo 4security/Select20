@@ -1,8 +1,18 @@
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
+@font-face {
+    font-family: 'Inter';
+    src: url("../assets/inter.woff2");
+}
+
+@font-face {
+    font-family: 'InterBold';
+    src: url("../assets/interbold.woff2");
+}
 
 /** Ionic CSS Variables **/
 :root {
+
+    --ion-font-family: 'Inter';
+
     /** primary **/
     --ion-color-primary: #007eff33;
     --ion-color-primary-rgb: 56, 128, 255;
