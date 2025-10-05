@@ -1,0 +1,44 @@
+####################
+# FRONTEND DEPENDENCIES
+####################
+
+# we install the frontend dependencies to create a node_modules directory
+FROM node:14 as frontend_dependencies
+COPY frontend-ionic/package.json /frontend
+WORKDIR /frontend
+RUN npm i && npm ci
+
+####################
+# INSTALL DEPENDENCY CHECK
+####################
+
+# we download the dependency-check zip & unzip it
+FROM ubuntu:14.04 as dependency_check_install
+RUN apt-get update \
+    && apt-get install -y wget unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.2/dependency-check-6.5.2-release.zip \
+    && unzip dependency-check-6.5.2-release.zip \
+    && rm dependency-check-6.5.2-release.zip
+
+####################
+# RUN DEPENDENCY CHECK
+####################
+
+# we require a Java image here to run the dependency-check
+FROM openjdk:18-alpine as dependency_check
+
+# add yarn for dependency check to run without errors
+RUN apk add yarn
+
+# copy dependency-check from the previous stage
+COPY --from=dependency_check_install /dependency-check /dependency-check
+
+# copy frontend node modules from the previous stage
+COPY --from=frontend_dependencies /frontend/node_modules /frontend/node_modules
+
+# this line is optional. It's only necessary if you wish to run the Dependency-Check standalone
+RUN /dependency-check/bin/dependency-check.sh --scan . --out ./report

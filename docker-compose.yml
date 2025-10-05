@@ -55,6 +55,16 @@ services:
     networks:
       - select20_mysql_sec_net
 
+  select20_whisper:
+    build: whisper/
+    container_name: select20_whisper
+    restart: always
+    depends_on:
+      - select20_backend_laravel
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+
 networks:
   select20_mysql_sec_net:
     name: select20_mysql_sec_net

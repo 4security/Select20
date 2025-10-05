@@ -34,46 +34,46 @@ export class ParserService {
 
   parseIcalToTodo(xmlRaw: string, rawTodo: string, project: Project): Todo {
     let regexIcsID: RegExp = /\/([a-zA-Z0-9\-]{2,60})\.ics/g;
-    let icsID: RegExpExecArray = regexIcsID.exec(xmlRaw);
+    let icsID: RegExpExecArray | null = regexIcsID.exec(xmlRaw);
 
     let regexUID: RegExp = /UID:(.{2,50})[;|\n]/g;
-    let rawUid: RegExpExecArray = regexUID.exec(rawTodo);
+    let rawUid: RegExpExecArray | null = regexUID.exec(rawTodo);
     let regexSummary: RegExp = /SUMMARY:(.{2,5000})[;|\n]/g;
-    let rawSummary: RegExpExecArray = regexSummary.exec(rawTodo);
+    let rawSummary: RegExpExecArray | null = regexSummary.exec(rawTodo);
     let regexPriority: RegExp = /PRIORITY:(\d{1,2})[;|\n]/g;
     let rawPriority = regexPriority.exec(rawTodo);
     let regexDescription: RegExp = /DESCRIPTION:(.{2,5000})[;|\n]/g;
-    let rawDescription: RegExpExecArray = regexDescription.exec(rawTodo);
+    let rawDescription: RegExpExecArray | null = regexDescription.exec(rawTodo);
     let regexCreated: RegExp = /CREATED:(.{2,50})[;|\n]/g;
-    let rawCreated: RegExpExecArray = regexCreated.exec(rawTodo);
+    let rawCreated: RegExpExecArray | null = regexCreated.exec(rawTodo);
     let regexModified: RegExp = /LAST-MODIFIED:(.{2,50})[;|\n]/g;
-    let rawModified: RegExpExecArray = regexModified.exec(rawTodo);
+    let rawModified: RegExpExecArray | null = regexModified.exec(rawTodo);
     let regexStart: RegExp = /DTSTAMP:(.{2,50})[;|\n]/g;
-    let rawStart: RegExpExecArray = regexStart.exec(rawTodo);
+    let rawStart: RegExpExecArray | null = regexStart.exec(rawTodo);
     let regexDue: RegExp = /DUE:(.{2,50})[;|\n]/g;
-    let rawDue: RegExpExecArray = regexDue.exec(rawTodo);
+    let rawDue: RegExpExecArray | null = regexDue.exec(rawTodo);
     let regexCategories: RegExp = /CATEGORIES:(.{2,50})[;|\n]/g;
-    let rawCategories: RegExpExecArray = regexCategories.exec(rawTodo);
+    let rawCategories: RegExpExecArray | null = regexCategories.exec(rawTodo);
     let regexStatus: RegExp = /STATUS:(.{2,50})[;|\n]/g;
-    let rawStatus: RegExpExecArray = regexStatus.exec(rawTodo);
+    let rawStatus: RegExpExecArray | null = regexStatus.exec(rawTodo);
     let regexRrule: RegExp = /RRULE:(.{2,50})[;|\n]/g;
-    let rawRrule: RegExpExecArray = regexRrule.exec(rawTodo);
+    let rawRrule: RegExpExecArray | null = regexRrule.exec(rawTodo);
     let regexRelatedTo: RegExp = /RELATED-TO:(.{2,50})[;|\n]/g;
-    let rawRelated: RegExpExecArray = regexRelatedTo.exec(rawTodo);
+    let rawRelated: RegExpExecArray | null = regexRelatedTo.exec(rawTodo);
     let regexPercent: RegExp = /PERCENT-COMPLETE:(.{2,50})[;|\n]/g;
-    let rawPercent: RegExpExecArray = regexPercent.exec(rawTodo);
+    let rawPercent: RegExpExecArray | null = regexPercent.exec(rawTodo);
     let regexCalendar: RegExp = /;NOCAL=true/g;
-    let rawCalendar: RegExpExecArray = regexCalendar.exec(rawTodo);
+    let rawCalendar: RegExpExecArray | null = regexCalendar.exec(rawTodo);
     let regexDuration: RegExp = /;DURATION=([^;|\n]{2,50})[;|\n]/g;
-    let rawDuration: RegExpExecArray = regexDuration.exec(rawTodo);
+    let rawDuration: RegExpExecArray | null = regexDuration.exec(rawTodo);
     let regexEnd: RegExp = /;ENDCAL=([^;|\n]{2,50})/g;
-    let rawEnd: RegExpExecArray = regexEnd.exec(rawTodo);
+    let rawEnd: RegExpExecArray | null = regexEnd.exec(rawTodo);
     let regexTags: RegExp = /;TACKS=([^;|\n]{2,50})/g;
-    let rawTags: RegExpExecArray = regexTags.exec(rawTodo);
+    let rawTags: RegExpExecArray | null = regexTags.exec(rawTodo);
 
     let todo: Todo = {
       uid: rawUid === null ? 'nouuid' : rawUid[1].toString(),
-      icsID: icsID[1].toString(),
+      icsID: (icsID ? icsID[1] : 'default-id').toString(),
       title: rawSummary === null ? '4' : this.unEscapeForIcal(rawSummary[1]),
       priority: rawPriority === null ? 4 : parseInt(rawPriority[1]),
       description: rawDescription === null ? '' : rawDescription[1],
@@ -130,7 +130,7 @@ export class ParserService {
   showNextEventOfRrule(todo: Todo) {
     if (todo.rrule != undefined && todo.rrule != '' && todo.rrule.length > 5) {
       let regexNextEvent: RegExp = /\;?NEXTEVENT=([0-9T]{15})/g;
-      let rawNextEvent: RegExpExecArray = regexNextEvent.exec(todo.description);
+      let rawNextEvent: RegExpExecArray | null = regexNextEvent.exec(todo.description);
       if (rawNextEvent !== null) {
         todo.due = rawNextEvent[1];
       } else {
@@ -245,24 +245,9 @@ export class ParserService {
     return newRawTodo;
   }
 
-  createProjectPersist(projects: Project[]): string {
-    let projectsAsString = JSON.stringify(projects);
-    let rawTodo: string =
-      `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//s20
-BEGIN:VTODO
-DTSTAMP:20220205T075620
-UID:s20-doNotDeleteThis
-DESCRIPTION:` +
-      projectsAsString +
-      `
-STATUS:NEEDS-ACTION
-SUMMARY:DONT DELETE - S20 PROJECTS
-END:VTODO
-END:VCALENDAR`;
-    return rawTodo;
-  }
+
+
+
 
   formatDateForInterface(todo: Todo): string {
     if (todo.due == null || todo.due == undefined || todo.due == '') {
@@ -296,7 +281,7 @@ END:VCALENDAR`;
     }
   }
 
-  parseProjects(displayname: string, href: string): Project {
+  parseProjects(displayname: string, href: string, deletedAt: string): Project {
     if (displayname != undefined) {
       return {
         title: displayname,
@@ -307,9 +292,11 @@ END:VCALENDAR`;
         position: 0,
         calendar: this.defaultCalendar,
         sorting: 100,
-        visible: true,
+        status: deletedAt == null ? "normal" : "deleted",
         count: 0,
       };
+    } else {
+      return new Project();
     }
   }
 
@@ -328,7 +315,7 @@ END:VCALENDAR`;
 
   }
 
-  compareTodos(todo: Todo, recreatedTodo: Todo): boolean {
+  compareTodos(todo: any, recreatedTodo: any): boolean {
     let isTheSame: boolean = false;
     for (let key in Object.entries(todo)) {
       for (let keyRec in Object.entries(recreatedTodo)) {

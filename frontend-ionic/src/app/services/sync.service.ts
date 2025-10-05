@@ -2,36 +2,38 @@ import { Injectable } from '@angular/core';
 import { MessageService } from './message.service';
 import { NextcloudService } from './nextcloud.service';
 import { ParserService } from './parser.service';
-import { DOMParserImpl as dom } from 'xmldom-ts';
-import * as xpath from 'xpath-ts';
+//import { DOMParserImpl as dom } from 'xmldom-ts';
+//import * as xpath from 'xpath-ts';
 import { Project } from '../models/project';
 import { Calendar } from '../models/calendar';
 import { defaultProjects, nextcloudUser } from '../config';
 import { Todo } from '../models/todo';
 import { Storage } from '@ionic/storage-angular';
-import noInternet from 'no-internet';
 import { QueueItem } from '../models/queueItem';
-import { AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular/standalone';
+import { XMLParser } from 'fast-xml-parser';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SyncService {
+
   todos: Todo[] = [];
   tags: String[] = [];
   relatedTodos: Todo[] = [];
   newTodos: Todo[] = [];
   newRelatedTodos: Todo[] = [];
-  timeForSync: number;
+  timeForSync: number = 0;
   queue: QueueItem[] = [];
   projects: Project[] = defaultProjects;
   projectTitles: string[] = [];
-  queueLength: number;
+  queueLength: number = 0;
   calendars: Calendar[] = [];
   syncActive = false;
   syncStatus: string = 'initial';
   isLoginOpen: boolean = false;
   superTimeout: any;
+  _storage: Storage | null = null;
 
   constructor(
     private nextcloud: NextcloudService,
@@ -41,8 +43,27 @@ export class SyncService {
     private messageService: MessageService
   ) { }
 
+  async ngOnInit() {
+    const storage = await this.storage.create();
+    this._storage = storage;
+  }
+
+  noInternet(): Promise<boolean> {
+    return new Promise((resolve) => {
+      if (!navigator.onLine) {
+        resolve(true);
+        return;
+      }
+
+      // Try to fetch a lightweight resource
+      fetch('https://www.google.com/favicon.ico', { method: 'HEAD', mode: 'no-cors' })
+        .then(() => resolve(false)) // Online
+        .catch(() => resolve(true)); // Offline or no internet access
+    });
+  }
+
   startSync() {
-    noInternet().then((offline) => {
+    this.noInternet().then((offline: any) => {
       if (offline) {
         this.syncActive = false;
         this.syncStatus = 'offline';
@@ -53,18 +74,12 @@ export class SyncService {
           this.syncActive = true;
           this.calendars = [];
           this.timeForSync = performance.now();
-          this.storage
-            ?.get('projects')
-            .then((projects) => {
-              this.projects = projects;
-              this.getProjectsAddNewOnes();
-              this.startOfflineSync();
-              this.startTimeout();
-            })
-            .catch((err) => {
-              this.projects = defaultProjects;
-              this.getProjectsAddNewOnes();
-            });
+          this.projects = defaultProjects;
+          this.getProjectsAddNewOnes();
+          this.startOfflineSync();
+          this.startTimeout();
+
+
         } else {
           console.log('🔁 Sync currently in progress');
         }
@@ -83,6 +98,66 @@ export class SyncService {
         '⭕ Timeout '
       );
     }, 15000);
+  }
+
+  updateSettings() {
+    this.storage.get('projects').then((projects: Project[]) => {
+      this.storage.get('tags').then((tags: String[]) => {
+        this.storage.get('calendars').then((calendars: string[]) => {
+          this.storage.get('currentProject').then((currentProject: Project) => {
+            var projectTitles: string[] = [];
+            projects.forEach(project => {
+              projectTitles.push(project.title);
+            });
+
+            if (currentProject == null) {
+              currentProject == defaultProjects[0];
+            }
+            var settings = {
+              "projectTitles": projectTitles,
+              "projects": projects,
+              "tags": tags,
+              "calendars": calendars,
+              "currentProject": currentProject
+            }
+
+            this.nextcloud.updateSettings({ "settings": JSON.stringify(settings) }).subscribe({
+              next: (result: any) => {
+                console.log("Sync settings");
+              }
+            });
+          });
+        });
+      });
+    });
+  }
+
+  getSettings() {
+    this.nextcloud.getSettings().subscribe({
+      next: (settings: any) => {
+        this.parseSettings(JSON.parse(settings.settings));
+      },
+      error: (error) => {
+        this.messageService.show('Error Get Settings', true);
+        console.error(
+          '⭕ Error loading settings', error
+        );
+      },
+    });
+  }
+
+  parseSettings(settings: any) {
+    try {
+      this.storage.set("projectTitles", settings["projectTitles"]);
+      this.storage.set("projects", settings["projects"]);
+      this.storage.set("tags", settings["tags"]);
+      this.storage.set("calendars", settings["calendars"]);
+      this.storage.set("currentProject", settings["currentProject"]);
+    } catch (error) {
+      console.log("Cannot parse settings");
+
+    }
+
   }
 
   public getSyncStatus(): string {
@@ -109,7 +184,6 @@ export class SyncService {
                   answerOfflineTodoSynced
                 );
                 if (answerOfflineTodoSynced == "") {
-                  console.log(queueIndex);
                   this.queue.splice(queueIndex, 1);
                   this.storage.set('queue', this.queue);
                 }
@@ -134,78 +208,71 @@ export class SyncService {
   getProjectsAddNewOnes(): void {
     this.nextcloud.getProjects().subscribe({
       next: (xmlDocu: string) => {
-        console.log('🔁 Get new projects');
-        let projectsXML: Document = new dom().parseFromString(xmlDocu);
-        let xpathDisplayName: string =
-          '//cal:comp[@name="VTODO"]/../../d:displayname';
-        let displaynames = xpath.select(xpathDisplayName, projectsXML);
-        let xpathHref: string = '//cal:comp[@name="VTODO"]/../../../../d:href';
-        let hrefs = xpath.select(xpathHref, projectsXML);
-        let xpathDelete: string = '//cal:comp[@name="VTODO"]/../..';
-        let fullRawXML = xpath.select(xpathDelete, projectsXML);
+        console.log('🔁 Get fresh projects');
+        const parser = new XMLParser({
+          ignoreAttributes: false,
+        });
+        let xmlProject = parser.parse(xmlDocu);
+        let responses = xmlProject["d:multistatus"]["d:response"];
+        let displayNames: string[] = responses.map((res: any) => {
+          return res["d:propstat"][0]["d:prop"]["d:displayname"];
+        });
+        let href: string[] = responses.map((res: any) => {
+          return res["d:href"];
+        });
+        let types: string[] = responses.map((res: any) => {
+          var result = "VEVENT";
+          try {
+            result = res["d:propstat"][0]["d:prop"]["cal:supported-calendar-component-set"]["cal:comp"]['@_name'];
+          } catch (error) { }
+          return result
+        });
+        let deletedAt: string[] = responses.map((res: any) => {
+          return res["d:propstat"][0]["d:prop"]["x2:deleted-at"];
+        });
+        console.log(deletedAt);
 
-        let xPathCalendarDisplayName: string =
-          '//cal:comp[@name="VEVENT"]/../../d:displayname';
-        let displayNamesCalendar = xpath.select(
-          xPathCalendarDisplayName,
-          projectsXML
-        );
-        let xPathCalendarHref: string =
-          '//cal:comp[@name="VEVENT"]/../../../../d:href';
-        let displayNamesHref = xpath.select(xPathCalendarHref, projectsXML);
 
-        this.projects = defaultProjects;
-        for (let ctrProject = 0; ctrProject < 100; ctrProject++) {
-          if (fullRawXML[ctrProject] != null) {
-            let newProject = this.parserService.parseProjects(
-              displaynames[ctrProject].firstChild.data,
-              hrefs[ctrProject].firstChild.data
-            );
-            newProject.sorting = this.projects.length;
-            let fullRawText: string = fullRawXML[ctrProject].toString();
-            let isInProjects: boolean = false;
-            if (this.projects.length > 0) {
-              this.projects.forEach((project) => {
-                if (newProject['url'] == project['url']) {
-                  isInProjects = true;
-                }
-              });
+        let calendars: any = [];
+        // Add new project if not already in project list
+        for (let ctrProjects = 0; ctrProjects < displayNames.length; ctrProjects++) {
+
+          let isInProjects: boolean = false;
+          let newProject = this.parserService.parseProjects(
+            displayNames[ctrProjects],
+            href[ctrProjects],
+            deletedAt[ctrProjects]
+          );
+          this.projects.forEach((project) => {
+            if (newProject['url'] == project['url']) {
+              isInProjects = true;
             }
-
-            if (
-              !isInProjects &&
-              !fullRawText.includes(
-                '<x2:deleted-at xmlns:x2="http://nextcloud.com/ns">2'
-              )
-            ) {
+          });
+          if (displayNames[ctrProjects] !== undefined && displayNames[ctrProjects] != "" && !displayNames.includes("remote") && !href[ctrProjects].includes("outlook")) {
+            if (!isInProjects && types[ctrProjects] != "VEVENT") {
               this.projects.push(newProject);
-              this.projectTitles.push(displaynames[ctrProject].firstChild.data);
+
+            }
+            if (types[ctrProjects] == "VEVENT") {
+              calendars.push({
+                name: displayNames[ctrProjects],
+                url: href[ctrProjects],
+              })
             }
           }
         }
-        // Delete objects are delete on day in 20** century others have no date inside
-        this.storage.set('projects', this.projects).then(() => {
-          this.storage.set('projectTitles', this.projectTitles).then(() => {
-            console.log('🔁 Projects updated');
-            this.getTodos();
+        this.storage.set('calendars', calendars).then(() => {
+          this.storage.set('projects', this.projects).then(() => {
+            this.projects.forEach(project => {
+              this.projectTitles.push(project.title);
+            });
+            this.storage.set('projectTitles', this.projectTitles).then(() => {
+              console.log('🔁 Calendars & Projects updated');
+              this.updateSettings();
+              this.getTodos();
+            });
           });
         });
-
-        for (let ctrCalendar = 0; ctrCalendar < 30; ctrCalendar++) {
-          if (displayNamesCalendar[ctrCalendar] != undefined) {
-            this.calendars.push({
-              name: displayNamesCalendar[ctrCalendar].firstChild.data,
-              url: displayNamesHref[ctrCalendar].firstChild.data,
-            });
-          }
-        }
-        this.calendars.forEach((calendar) => {
-          calendar.url = calendar.url
-            .replace('/remote.php/dav/calendars/' + nextcloudUser + '/', '')
-            .replace('/', '');
-        });
-
-        this.storage.set('calendars', this.calendars);
       },
       error: (error) => {
         console.error('⭕ Cannot get projects', JSON.stringify(error));
@@ -228,6 +295,7 @@ export class SyncService {
     this.todos = [];
     let ctrResolved = 0;
     let resolveProjects: Project[] = [];
+
     for (
       let ctrProjects = 0;
       ctrProjects < this.projects.length;
@@ -235,7 +303,6 @@ export class SyncService {
     ) {
       if (
         this.projects[ctrProjects].url != 'only-view' &&
-        this.projects[ctrProjects].visible &&
         !this.projects[ctrProjects].title.includes('Upcomming')
       ) {
         resolveProjects.push(this.projects[ctrProjects]);
@@ -243,7 +310,7 @@ export class SyncService {
     }
     resolveProjects.forEach((project) => {
       this.nextcloud.getTodosFormNextcloud(project.url).subscribe({
-        next: (rawTodos: string) => {
+        next: (rawTodos: any) => {
           if (rawTodos != null || rawTodos.length > 10) {
             ctrResolved++;
             this.parseAllTodosInput(rawTodos, project);
@@ -317,33 +384,26 @@ export class SyncService {
 
     for (let ctrTodos = 0; ctrTodos < todosIcalRaws.length; ctrTodos++) {
       if (
-        !todosIcalRaws[ctrTodos].firstChild.nodeValue.includes(
+        !todosIcalRaws[ctrTodos].firstChild?.nodeValue?.includes(
           'PERCENT-COMPLETE:100'
         )
       ) {
         let todo: Todo = this.parserService.parseIcalToTodo(
-          icalHrefs[ctrTodos].firstChild.nodeValue,
-          todosIcalRaws[ctrTodos].firstChild.nodeValue,
+          icalHrefs[ctrTodos].firstChild?.nodeValue ?? '',
+          todosIcalRaws[ctrTodos].firstChild?.nodeValue ?? '',
           project
         );
         this.tags = this.tags.concat(todo.tags);
 
         if (todo.status != 'COMPLETED') {
-          if (todo.icsID == 's20-doNotDeleteThis') {
-            try {
-              this.projects = JSON.parse(todo.description);
-              this.storage.set('projects', this.projects);
-            } catch (error) {
-              this.messageService.show('⭕ Cannot parse projects', true);
-            }
+
+          ctrTodosInList++;
+          if (todo.related != '') {
+            this.newRelatedTodos.push(todo);
           } else {
-            ctrTodosInList++;
-            if (todo.related != '') {
-              this.newRelatedTodos.push(todo);
-            } else {
-              this.newTodos.push(todo);
-            }
+            this.newTodos.push(todo);
           }
+
         }
       }
     }
@@ -360,9 +420,8 @@ export class SyncService {
     this.messageService.show('💾 Save Request - offline', true);
   }
 
-  initateLogin(credentials) {
+  initateLogin(credentials: any) {
     this.isLoginOpen = false;
-
   }
 
   async presentRegisterPrompt() {

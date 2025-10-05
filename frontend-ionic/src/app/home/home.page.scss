@@ -6,10 +6,10 @@ ion-title {
     height: 20px;
     min-width: 20px;
     border-radius: 30px;
-    background: black;
-    border: 3px solid grey;
+    background: var(--panel);
+    border: 3px solid var(--tint);
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 5px;
     margin-top: 5px;
     transition: 0.2s ease-in-out;
 }
@@ -20,7 +20,7 @@ ion-title {
 }
 
 .tickbox:hover {
-    background: grey;
+    background: var(--tint);
 }
 
 @keyframes strike {
@@ -42,11 +42,11 @@ ion-title {
 .tickboxcage:hover:after {
     content: ' ';
     position: absolute;
-    top: 20px;
+    top: 22px;
     left: 30px;
-    width: 90%;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.70);
+    width: 87%;
+    height: 2px;
+    background: var(--tint);
     animation: strike .55s ease-in-out forwards;
 }
 
@@ -64,6 +64,10 @@ ion-title {
     }
 }
 
+ion-modal ion-content {
+    text-align: center;
+}
+
 .project {
     padding: 7px !important;
     margin-bottom: 5px;
@@ -72,22 +76,23 @@ ion-title {
     overflow: hidden;
 }
 
+
 .project ion-icon {
     margin-bottom: -2px;
 }
 
 .editicons {
     float: right;
-    color: #2b2b2b;
+    color: var(--buttons);
     margin-top: -14px;
 }
 
 .project:hover .editicons {
-    color: white;
+    color: var(--font);
 }
 
 .subtaskbutton {
-    color: #1d1d1d;
+    color: var(--buttons);
     vertical-align: middle;
     font-size: 25px;
     float: right;
@@ -95,26 +100,22 @@ ion-title {
 }
 
 .todo:hover .subtaskbutton {
-    color: white;
+    color: var(--font);
     transition: 0.4s ease-in-out;
 }
 
 .todo {
-    border-bottom: 1px solid #515151;
-    padding: 5px;
+    padding: 7px;
     display: flex;
     font-size: 14px;
     transition: 0.8s ease-in-out;
     font-family: Inter, Arial, Helvetica, sans-serif;
 }
 
-.todo:hover {
-    background: #3f3f3f;
-}
 
 .todotext {
     float: right;
-    width: 95%;
+    width: 100%;
 }
 
 .relatedTodo {
@@ -123,7 +124,7 @@ ion-title {
 
 .project:hover,
 #newTodoInput:active #newTodoPane {
-    background: #424242;
+    background: var(--buttons);
 }
 
 .title {
@@ -137,11 +138,11 @@ ion-title {
 }
 
 .title:hover {
-    background: #2b2b2b;
+    background: var(--buttons);
 }
 
 .chip {
-    background: #2b2b2b;
+    background: var(--buttons);
     padding: 2px 10px;
     font-size: 12px;
     border-radius: 30px;
@@ -159,13 +160,13 @@ ion-title {
 }
 
 #container {
-    background: #121212;
-    color: #dedede !important;
+    background: var(--ion-background-color);
+    color: var(--font) !important;
     padding-bottom: 100px;
 }
 
 #mainPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 45%;
     padding: 0.8vw;
     position: absolute;
@@ -177,7 +178,7 @@ ion-title {
 }
 
 #todayPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 15%;
     padding: 10px 0.8vw;
     position: absolute;
@@ -190,7 +191,7 @@ ion-title {
 }
 
 #buttonsPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 15%;
     position: absolute;
     left: 21%;
@@ -210,32 +211,42 @@ ion-title {
     -webkit-flex-wrap: nowrap;
 }
 
-#buttonsPane ion-icon {
+#buttonsPane ion-icon,
+#newTodoPane ion-icon {
     flex-grow: 2;
     padding: 5px;
     margin-right: 5px;
     height: 22px;
     border-radius: 5px;
-    background-color: #2b2b2b;
-    color: #dedede;
+    background-color: var(--buttons);
+    color: var(--font);
     font-size: 18px;
     transition: 0.4s ease-in-out;
 }
 
-#buttonsPane ion-icon:last-child {
-    margin-right: 0px;
+#buttonsPane .buttonContainer {
+    width: 20%;
+}
+
+#newTodoPane ion-icon {
+    display: inline-block;
+    margin: 0;
+}
+
+#newTodoPane ion-icon {
+    padding: 4px;
 }
 
 #buttonsPane ion-icon:hover {
-    background-color: #424242;
+    background-color: var(--buttons);
 }
 
 #todayPane:hover ion-icon {
-    color: white;
+    color: var(--font);
 }
 
 #headingPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 45%;
     padding: 10px 0.8vw;
     position: absolute;
@@ -249,7 +260,7 @@ ion-title {
 }
 
 #newTodoPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 45%;
     padding: 11px 1vw;
     position: absolute;
@@ -261,7 +272,7 @@ ion-title {
 }
 
 #projectsPane {
-    background: #1d1d1d;
+    background: var(--panel);
     width: 15%;
     position: absolute;
     left: 21%;
@@ -278,7 +289,6 @@ ion-toast,
 .toast-container,
 .toast-bottom {
     bottom: 100px !important;
-
 }
 
 #newTodoInput {
@@ -289,28 +299,51 @@ ion-toast,
 #newTodoInput,
 #supertask,
 .project {
-    background: #2b2b2b;
+    background: var(--buttons);
     border-radius: 5px;
-    border: 0px #2b2b2b solid;
+    border: 0px var(--buttons) solid;
 }
 
 input:active #newTodoPane {
-    background: #424242;
+    background: var(--panel);
 }
 
 #newTodoInput {
     width: 100%;
+    display: inherit;
+}
+
+.iconwrapper {
+    display: inline-block;
+}
+
+.iconwrapper:first-child {
+    display: none;
+}
+
+.iconwrapper:last-child {
+    margin-left: 15px;
+    float: right;
+}
+
+.iconwrapper:last-child ion-icon {
+    padding-top: 3px;
+}
+
+#newTodoInputWrapper {
+    display: inline-block;
+    width: calc(100%);
 }
 
 #supertask {
-    background: #3d0303;
+    background: var(--buttons);
     padding: 6px;
     text-align: center;
     margin-bottom: 5px;
 }
 
 #closeSuperTask {
-    margin-top: -1px;
+    margin-top: -7px;
     float: right;
     font-size: 20px;
 }
@@ -321,7 +354,7 @@ ion-title img {
 }
 
 .arcord {
-    background-color: #191919;
+    background-color: var(--panel);
     text-align: center;
     padding: 10px 0.8vw;
     border-radius: 5px;
@@ -332,16 +365,12 @@ ion-title img {
     margin-top: 20px;
 }
 
-#newTodoInputClose,
-#newTodoInputSubmit {
-    display: none;
-}
 
 #addProject {
     text-align: center;
 }
 
-@media only screen and (max-width: 1100px) {
+@media only screen and (max-width: 1600px) {
 
     #mainPane,
     #headingPane,
@@ -364,39 +393,37 @@ ion-title img {
     #mainPane,
     #headingPane,
     #newTodoPane {
+        font-weight: 700;
         width: 95vw;
         left: 2.5vw;
     }
 
-    #newTodoInputWrap {
-        padding: 10px;
-    }
 
     #newTodoInput {
-        margin-left: 30px;
-        width: calc(97% - 20px);
+        margin-top: 3px;
+        width: calc(100% - 20px);
     }
 
-    #newTodoInputClose,
-    #newTodoInputSubmit {
-        display: inline;
-    }
-
-    #newTodoInputClose {
-        float: left;
-        margin-top: 13px;
-        margin-right: 6px;
-        font-size: 23px;
-        margin-left: 9px;
-    }
-
-    #newTodoInputSubmit {
+    #newTodoInputWrapper {
+        display: inline-block;
+        width: calc(100% - 40px);
         float: right;
-        margin-right: 14px;
-        margin-top: -34px;
-        font-size: 17px;
-
     }
+
+    .iconwrapper:first-child {
+        display: inline-block;
+        margin-right: -10px;
+        margin-top: 3px;
+        float: left;
+        margin-left: 10px;
+    }
+
+    .iconwrapper:last-child {
+        margin-left: 5px;
+        float: right;
+        margin-top: -30px;
+    }
+
 
     #mainPane {
         top: 155px;
@@ -409,19 +436,22 @@ ion-title img {
 
     #newTodoPane {
         position: fixed;
-        top: auto !important;
-        bottom: 0px;
-        border-radius: 5px 5px !important;
-        background-color: rgb(0, 0, 0);
-        padding: 0.5vw;
+        top: 400px;
+        left: 0px;
+        border-radius: 0px !important;
+        background-color: black;
+        padding: 20px 0;
         z-index: 100;
         overflow: hidden;
+        height: auto;
     }
 
+
     #headingPane {
-        top: 90px;
-        height: 40px;
-        padding-top: 8px;
+        top: 85px;
+        height: 90px;
+        padding-top: 35px;
+        font-size: 25px;
     }
 
     #todayPane {
@@ -433,7 +463,10 @@ ion-title img {
         width: 95vw;
         left: -100vw;
         z-index: 10;
-
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
+        font-weight: 700;
     }
 
     #buttonsPane {
@@ -447,14 +480,15 @@ ion-title img {
         padding-left: 10px;
     }
 
-    #buttonsPane ion-icon {
+    #buttonsPane ion-icon,
+    #buttonsPane a ion-icon {
         font-size: 18px;
         padding: 8px;
     }
 
     .project {
         padding: 10px 20px !important;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
     }
 
     #superTodoText {

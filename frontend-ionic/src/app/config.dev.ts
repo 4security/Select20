@@ -2,6 +2,7 @@ import { Calendar } from "./models/calendar";
 import { Project } from "./models/project";
 
 const proxyDomain = "http://192.168.178.99:8001/api";
+const whisperDomain = "https://testapi.lan";
 const defaultCalendar: Calendar = {
     name: "tasks",
     url: "tasks"
@@ -15,7 +16,7 @@ const defaultProjects: Project[] = [
         position: 0,
         calendar: defaultCalendar,
         sorting: 1,
-        visible: true,
+        status: "normal",
         count: 0,
     },
     {
@@ -25,7 +26,7 @@ const defaultProjects: Project[] = [
         position: 0,
         calendar: defaultCalendar,
         sorting: 2,
-        visible: true,
+        status: "normal",
         count: 0,
     },
     {
@@ -35,7 +36,7 @@ const defaultProjects: Project[] = [
         position: 0,
         calendar: defaultCalendar,
         sorting: 3,
-        visible: true,
+        status: "normal",
         count: 0
     }
 ];
@@ -46,8 +47,8 @@ const defaultCurrentProject: Project = {
     position: 0,
     calendar: defaultCalendar,
     sorting: 2,
-    visible: true,
+    status: "normal",
     count: 0,
 };
 
-export { defaultProjects, defaultCalendar, defaultCurrentProject, proxyDomain, nextcloudUser };
+export { defaultProjects, defaultCalendar, defaultCurrentProject, proxyDomain, nextcloudUser, whisperDomain };

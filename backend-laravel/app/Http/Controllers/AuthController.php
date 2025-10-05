@@ -61,6 +61,42 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
+    public function updateSettings(Request $request)
+    {
+        $validator = $this->getValidationFactory()
+            ->make($request->all(), [
+                'settings' => 'required|string|min:4|max:20000',
+            ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $user = JWTAuth::user();
+        $user->settings = $request->settings;
+        $user->save();
+        $this->saveHistory("Update settings", $user->id);
+
+        return response()->json([
+            'message' => 'User settings updated',
+            'settings' => $user->settings,
+        ], 200);
+    }
+
+    public function getSettings(Request $request)
+    {
+
+        $user = JWTAuth::user();
+        if ($user->nextcloudkey == "") {
+            return response(['message' => 'Not authorized'], 401);
+        }
+
+        $this->saveHistory("Load Settings");
+        return response()->json([
+            'settings' => $user->settings,
+        ], 200);
+    }
+
+
     public function register(Request $request)
     {
         $validator = $this->getValidationFactory()
@@ -147,9 +183,11 @@ class AuthController extends Controller
 
     protected function createNewToken($token)
     {
+        $user = JWTAuth::user();
         $cookie = $this->getCookie($token);
         return response()->json([
             'expires_in' => auth()->factory()->getTTL() * 60,
+            'settings' => $user->settings
         ])->withCookie($cookie);
     }
 
@@ -166,8 +204,8 @@ class AuthController extends Controller
             auth()->factory()->getTTL(),
             null,
             null,
-            env('APP_DEBUG') ? false : true,
             true,
+            false,
             false,
             'None'
         );

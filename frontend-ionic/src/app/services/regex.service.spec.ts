@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage-angular';
 import { RegexService } from './regex.service';
 import { isFriday, isSaturday, isToday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { defaultCurrentProject } from '../config';
 import { Project } from '../models/project';
+import { RruleService } from './rrule.service';
 
 describe('RegexService', () => {
   let service: RegexService;
@@ -17,7 +18,7 @@ describe('RegexService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [MessageService, Storage],
+      providers: [MessageService, RruleService, Storage],
     });
 
     service = TestBed.inject(RegexService);

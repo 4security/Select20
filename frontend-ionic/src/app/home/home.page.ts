@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import {
   addDays,
   format,
@@ -9,54 +9,93 @@ import {
 } from 'date-fns';
 import { NextcloudService } from '../services/nextcloud.service';
 import { Storage } from '@ionic/storage-angular';
+import { AlertController, IonItem } from "@ionic/angular/standalone";
 import { ParserService } from '../services/parser.service';
 import { RegexService } from '../services/regex.service';
 import { RruleService } from '../services/rrule.service';
 import { formatISO } from 'date-fns/formatISO';
-import { AlertController, IonModal } from '@ionic/angular';
 import { Todo } from '../models/todo';
 import { Project } from '../models/project';
 import { MessageService } from '../services/message.service';
 import { Calendar } from '../models/calendar';
-import noInternet from 'no-internet';
-import { ActivatedRoute, Router } from '@angular/router';
 import { QueueItem } from '../models/queueItem';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, IonButtons, IonFabButton, IonFab, IonIcon, IonModal } from '@ionic/angular/standalone';
+import { FormsModule } from '@angular/forms';
 import {
   defaultCalendar,
   defaultCurrentProject,
   defaultProjects,
 } from '../config';
 import { SyncService } from '../services/sync.service';
+import { HttpClientModule } from "@angular/common/http";
+import { addIcons } from "ionicons";
+import { add, addCircle, addOutline, arrowUndo, calendar, close, ellipsisHorizontal, help, hourglass, link, logOut, menu, pricetag, repeat, search, refresh, eye, cloudOffline, checkbox, trash } from 'ionicons/icons';
+import { NgForOf, NgIf } from "@angular/common";
+
+
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
+  standalone: true,
+  providers: [Storage, ParserService, RegexService, RruleService, MessageService, NextcloudService, SyncService],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, FormsModule, IonButtons, IonFabButton, IonFab, IonIcon, HttpClientModule, NgForOf, NgIf, IonModal, IonIcon, IonItem, IonModal,],
 })
 export class HomePage implements OnInit {
   todos: Todo[] = [];
   todosCopy: Todo[] = [];
   relatedTodos: Todo[] = [];
-  lastChangedTodo: Todo;
-  superTaskTodo: Todo;
+  defaultTodo: Todo = {
+    icsID: "xxxxxxxxxxxxxxxxxxx",
+    uid: "xxxxxxxxxxxxxxxxxxxxx",
+    title: 'default',
+    priority: 4,
+    description: '',
+    created: this.regexService.formatIcsDate(Date.now()),
+    modified: this.regexService.formatIcsDate(Date.now()),
+    startDate: this.regexService.formatIcsDate(addDays(Date.now(), -1)),
+    due: '',
+    dueUNIX: 0,
+    createdUNIX: 0,
+    categories: '',
+    status: 'NEEDS-ACTION',
+    percent: 0,
+    raw: '',
+    endDate: '',
+    rrule: '',
+    duration: 30,
+    related: '',
+    project: defaultProjects[0],
+    isVisible: true,
+    isChecklist: false,
+    isOverdue: false,
+    tags: [],
+    subs: [],
+  };
+  lastChangedTodo: Todo = this.defaultTodo;
+  superTaskTodo: Todo = this.defaultTodo;
   lastSubmittedTodo: string = '';
   superTodoText: string = '';
   refreshIcon: string = 'refresh';
+  newProjectName: string = "";
+  isLoginScreenOpen: boolean = false;
 
   defaultCalendar: Calendar = defaultCalendar;
   calendars: Calendar[] = [];
   currentProject: Project = defaultCurrentProject;
   projectTitles: String[] = [];
   projects: Project[] = defaultProjects;
-  tags: String[] = [];
+  tags: string[] = [];
   queueLength: number = 0;
 
   today: string = 'Loading ...';
   heading: string = 'Loading ...';
   inputNewTodo: string = '';
 
-  @ViewChild('projectPane') projectsPane;
-  @ViewChild('buttonsPane') buttonsPane;
+  @ViewChild('projectPane') projectsPane: any;
+  @ViewChild('buttonsPane') buttonsPane: any;
 
   isFABShown: boolean = false;
   isPhoneView: boolean = false;
@@ -65,9 +104,9 @@ export class HomePage implements OnInit {
   isSyncActive: boolean = false;
   isInSearchMode: boolean = false;
 
-  indexOfLastChangedTodo: number;
+  indexOfLastChangedTodo: number = 0;
   _storage: Storage | null = null;
-  syncTest;
+  syncTest: any;
 
   emailLogin: string = "";
   passwordLogin: string = "";
@@ -80,8 +119,9 @@ export class HomePage implements OnInit {
   nextcloudUrl: string = "";
   nextcloudAPI: string = "";
 
-  @ViewChild(IonModal) registerModal: IonModal;
+
   demoMode: boolean = false;
+  isModalOpen: boolean = false;
 
   constructor(
     private nextcloud: NextcloudService,
@@ -91,23 +131,22 @@ export class HomePage implements OnInit {
     private regexService: RegexService,
     private rruleService: RruleService,
     private alertController: AlertController,
-    private messageService: MessageService,
-    private router: Router,
-    private route: ActivatedRoute
+    private messageService: MessageService
   ) {
-    this.route.queryParams.subscribe((params) => {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.projects =
-          this.router.getCurrentNavigation().extras.state.projects;
-      }
-    });
+    addIcons({ menu, help, search, calendar, close, pricetag, addOutline, link, repeat, hourglass, addCircle, ellipsisHorizontal, refresh, cloudOffline, arrowUndo, logOut, add, eye, checkbox, trash });
     if (window.innerWidth <= 600) {
       this.isFABShown = true;
       this.isPhoneView = true;
     }
+
+  }
+
+  ionViewWillEnter() {
+    this.getTodosFromCache();
   }
 
   async ngOnInit() {
+
     const storage = await this.storage.create();
     this._storage = storage;
     if (!this.demoMode) {
@@ -118,7 +157,7 @@ export class HomePage implements OnInit {
     let offlineSyncBackgroundJob = setInterval(() => {
       this.syncService.startOfflineSync();
     }, 15 * 60000);
-    noInternet().then((offline) => {
+    this.syncService.noInternet().then((offline) => {
       if (offline) {
         this.refreshIcon = "cloud-offline";
       }
@@ -132,6 +171,7 @@ export class HomePage implements OnInit {
 
     this.syncTest = setInterval(() => {
       let syncStatus = this.syncService.getSyncStatus();
+      this.isModalOpen = false;
       if (syncStatus == 'offline') {
         this.updateQueueLength();
         clearInterval(this.syncTest);
@@ -148,34 +188,30 @@ export class HomePage implements OnInit {
         this.messageService.show("⭕ Connectivity issues")
         this.isSyncActive = false;
       }
-      if (syncStatus == 'not authorized' && !this.registerModal.isOpen) {
+      if (syncStatus == 'not authorized') {
         clearInterval(this.syncTest);
-        this.registerModal.present()
+        this.isLoginScreenOpen = true;
         this.isSyncActive = false;
       }
     }, 200);
   }
 
   getTodosFromCache() {
-    this._storage.get('projectTitles').then((projectTitles: String[]) => {
-      this._storage.get('projects').then((projects: Project[]) => {
-        this._storage.get('tags').then((tags: String[]) => {
-          this._storage.get('todos').then(
-            (todos: Todo[]) => {
-              this._storage.get('relatedTodos').then((relatedTodos: Todo[]) => {
-                this.projects = projects;
-                this.todos = todos;
-                this.todosCopy = todos;
-                this.tags = tags;
-                this.relatedTodos = relatedTodos;
-                this.projectTitles = projectTitles;
+    this._storage?.get('projectTitles').then((projectTitles: String[]) => {
+      this._storage?.get('projects').then((projects: Project[]) => {
+        this._storage?.get('tags').then((tags: string[]) => {
+          this._storage?.get('todos').then((todos: Todo[]) => {
+            this._storage?.get('relatedTodos').then((relatedTodos: Todo[]) => {
+              this.projectTitles = projectTitles;
+              this.projects = projects;
+              this.tags = tags;
+              this.todos = todos;
+              this.todosCopy = todos;
+              this.relatedTodos = relatedTodos;
 
-                this.showProjectTodos(this.currentProject);
-              });
-            },
-            (error) => {
-              console.error('⭕ Cannot get todos form cache');
-            }
+              this.showProjectTodos(this.currentProject);
+            });
+          }
           );
           this.updateQueueLength();
         });
@@ -184,13 +220,13 @@ export class HomePage implements OnInit {
   }
 
   updateQueueLength() {
-    this._storage.get('queue').then(
+    this._storage?.get('queue').then(
       (queue: QueueItem[]) => {
         if (queue != null) {
           this.queueLength = queue.length;
         }
       },
-      (error) => {
+      (error: any) => {
         console.error('⭕ Cannot get queue form cache');
       }
     );
@@ -218,8 +254,16 @@ export class HomePage implements OnInit {
     this.isFABShown = !this.isFABShown;
   }
 
-  createNewTodo(summary): void {
-    let text = this.regexService.stripHtml(summary.target.innerHTML);
+  extractTextFromInput(summary: any): void {
+    let text = this.regexService.stripHtml(summary.srcElement.value);
+    this.createNewTodo(text);
+    summary.srcElement.value = this.regexService.stripHtml(summary.srcElement.value);
+    summary.srcElement.value = '';
+  }
+
+
+
+  createNewTodo(text: string) {
 
     let newUid: string =
       Math.random().toString(36).substring(2, 15) +
@@ -255,7 +299,7 @@ export class HomePage implements OnInit {
       subs: [],
     };
     let newTodo: Todo = this.regexService.extractKeywords(text, todo, this.projects, this.projectTitles);
-    summary.target.innerHTML = this.regexService.stripHtml(summary.target.innerHTML);
+    newTodo = this.addNextEventWhenRrule(newTodo);
     if (this.parserService.checkTodoForLogic(todo)) {
       if (this.superTodoText != '') {
         let indexSuperTodo: number = this.todos.indexOf(this.superTaskTodo);
@@ -264,11 +308,27 @@ export class HomePage implements OnInit {
       } else {
         this.todos.unshift(newTodo);
       }
-      this._storage.set('todos', this.todos);
+      this._storage?.set('todos', this.todos);
       this.updateTodo(newTodo, todo.project);
-      summary.target.innerHTML = '';
     }
+  }
 
+  addNextEventWhenRrule(todo: Todo) {
+    if (todo.rrule.includes("FREQ")) {
+      let theNextEvent = this.rruleService.calculateNextEvent(todo, 'NoNextEvent');
+      todo.due = formatISO(theNextEvent, { format: 'basic' }).replace(
+        /\+\d\d\:00/g,
+        ''
+      );
+      todo.description = todo.description.replace(
+        /\;?NEXTEVENT=[0-9T]{15}/g,
+        ';NEXTEVENT=' + todo.due
+      );
+      if (!todo.description.includes('NEXTEVENT=')) {
+        todo.description += ';NEXTEVENT=' + todo.due;
+      }
+    }
+    return todo;
   }
 
   toggleTodo(todo: Todo) {
@@ -302,7 +362,7 @@ export class HomePage implements OnInit {
 
         this.updateTodo(todo, todo.project, true);
         this.todos = this.todos.filter((item) => item !== todo);
-        this._storage.set('todos', this.todos);
+        this._storage?.set('todos', this.todos);
       }
     }
 
@@ -349,17 +409,8 @@ export class HomePage implements OnInit {
     }
   }
 
-  showHiddenProjects() {
-    this.projects.forEach((project) => {
-      project.visible = true;
-    });
-  }
 
-  addProject() {
-    this.storage.set('currentProject', "");
-    this.router.navigate(['/project']);
 
-  }
 
   toggleRrule(todo: Todo, indexOfTodo: number): void {
     let regexNextEvent = /\;?NEXTEVENT=([0-9T]{15})/g;
@@ -388,7 +439,7 @@ export class HomePage implements OnInit {
     this.todos[indexOfTodo] = todo;
   }
 
-  changeSummary(summary, todo: Todo) {
+  changeSummary(summary: any, todo: Todo) {
     let oldProject = todo.project;
 
     this.lastChangedTodo = { ...todo };
@@ -421,7 +472,7 @@ export class HomePage implements OnInit {
       extractedTodo.status = 'NEEDS-ACTION';
       extractedTodo.isVisible = true;
 
-      this._storage.set('todos', this.todos);
+      this._storage?.set('todos', this.todos);
       summary.target.innerHTML = extractedTodo.title;
     } else {
       summary.target.innerHTML = originalTodo
@@ -442,7 +493,7 @@ export class HomePage implements OnInit {
 
   leaveSubTaskMode(): void {
     this.superTodoText = '';
-    this.superTaskTodo = null;
+    this.superTaskTodo = this.defaultTodo;
   }
 
   updateTodo(todo: Todo, project: Project, isDeleted: boolean = false) {
@@ -482,7 +533,7 @@ export class HomePage implements OnInit {
               } else {
                 this.messageService.show(
                   '💾 Saved + 📅 Scheduled in ' +
-                  project.calendar.name +
+                  defaultCalendar.name +
                   ' for ' +
                   todo.duration +
                   'm'
@@ -491,7 +542,7 @@ export class HomePage implements OnInit {
               }
 
               this.parserService.showNextEventOfRrule(todo);
-              this._storage.set('todos', this.todos);
+              this._storage?.set('todos', this.todos);
               return true;
             } else {
               console.error('⭕ Sabre Error', todoAnswer);
@@ -529,7 +580,7 @@ export class HomePage implements OnInit {
       case 3:
         return 'blue';
       default:
-        return 'white';
+        return 'var(--font)';
     }
   }
 
@@ -537,7 +588,7 @@ export class HomePage implements OnInit {
     return this.parserService.formatDateForInterface(todo);
   }
 
-  showTag(tag) {
+  showTag(tag: string) {
     this.todos.forEach((todo: Todo) => {
       if (todo.tags.includes(tag)) {
         todo.isVisible = true;
@@ -645,9 +696,83 @@ export class HomePage implements OnInit {
     }
   }
 
-  updateProject(project: Project): void {
-    this.storage.set('currentProject', project);
-    this.router.navigate(['/project']);
+  saveProject(): void {
+    if (this.currentProject.title == "New") {
+      this.submitNewProject();
+    } else {
+      this.renameProject();
+    }
+  }
+
+  renameProject() {
+    if (this.newProjectName.length > 3) {
+      this.nextcloud.renameProject(this.currentProject.url, this.newProjectName).subscribe({
+        next: (renameAnswer: string) => {
+          console.log(renameAnswer);
+          this.refresh();
+          this.currentProject.title = this.newProjectName;
+          this.isModalOpen = false;
+        }
+      });
+    } else {
+      this.messageService.show("Project name to short", true);
+    }
+  }
+
+  async deleteProject() {
+    const alert = await this.alertController.create({
+      header: 'Remove Project?',
+      message: 'Confirm to remove project ' + this.currentProject.title,
+
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.nextcloud.deleteProject(this.currentProject.url).subscribe({
+              next: (deleteAnswer: string) => {
+                console.log(deleteAnswer);
+                this.refresh();
+                this.isModalOpen = false;
+              }
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  addProject() {
+    this.isModalOpen = true;
+    this.currentProject.title = "New";
+  }
+
+  submitNewProject() {
+    if (this.newProjectName.length > 3) {
+      this.nextcloud.createProject(this.newProjectName).subscribe({
+        next: (createAnswer: string) => {
+          console.log(createAnswer);
+          this.refresh();
+          this.isModalOpen = false;
+        }
+      });
+    } else {
+      this.messageService.show("Project name to short", true);
+    }
+  }
+
+  cancel() {
+    this.isModalOpen = false;
+  }
+
+  openModal(project: Project) {
+    this.isModalOpen = true;
+    this.currentProject = project;
   }
 
   async deleteDueDate(todo: Todo) {
@@ -708,7 +833,7 @@ export class HomePage implements OnInit {
   }
 
 
-  refreshCircle(event) {
+  refreshCircle(event: any) {
     this.refresh();
     setTimeout(() => {
       event.target.complete();
@@ -724,7 +849,7 @@ export class HomePage implements OnInit {
 
   addDescription(todo: Todo) { }
 
-  getURL(summary: string) {
+  getURL(summary: any) {
     let url = 'none';
     try {
       url = summary.match(/(https?:\/\/[^ ]*)/)[1];
@@ -740,10 +865,12 @@ export class HomePage implements OnInit {
       this.messageService.show("You are logged out!");
 
     });
-    this._storage.clear();
+    this._storage?.remove("projects");
+    this._storage?.clear();
     this.isSyncActive = false;
     this.projects = [];
     this.todos = [];
+    this.isLoginScreenOpen = true;
   }
 
   switchSearchMode() {
@@ -764,7 +891,7 @@ export class HomePage implements OnInit {
     this.showProjectTodos(this.currentProject);
   }
 
-  search(summary): void {
+  search(summary: any): void {
     if (this.isInSearchMode) {
       let term = this.regexService.stripHtml(summary.target.innerHTML);
       this.todosCopy.forEach((todo) => {
@@ -778,10 +905,11 @@ export class HomePage implements OnInit {
 
   login() {
     this.nextcloud.login(this.emailLogin, this.passwordLogin).subscribe({
-      next: (loginAnswer: string) => {
+      next: (loginAnswer: any) => {
         console.log('✅ Credentials correct', loginAnswer);
+        this.syncService.parseSettings(JSON.parse(loginAnswer.settings));
         this.sync();
-        this.registerModal.dismiss();
+        this.isLoginScreenOpen = false;
 
       },
       error: (error) => {
@@ -808,7 +936,7 @@ export class HomePage implements OnInit {
     this.storage.set("projects", this.projects);
     this.storage.set("projectTitles", ["📥 Inbox", "🔴 Today", "📅 Upcoming", "🏡 Home", "💼 Office", "🌅 Travel", "🏀 Gym", "🍒 Groceries"]);
     this.storage.set('calendars', this.calendars);
-    this.registerModal.dismiss();
+    this.isLoginScreenOpen = false;
     this.todos = [];
     console.log('✅ Demo Mode active');
     this.demoMode = true;
@@ -828,7 +956,7 @@ export class HomePage implements OnInit {
         this.nextcloudAPI
       )
       .subscribe({
-        next: (loginAnswer: string) => {
+        next: (loginAnswer: any) => {
           this.sync();
           console.log("Login Self hosted worked", loginAnswer)
           this.messageService.show("Register successful. Login now!");
@@ -839,6 +967,14 @@ export class HomePage implements OnInit {
             'Error register - validate your inputs'
           );
         },
+
       });
   }
+
+
+
+
+
+
+
 }

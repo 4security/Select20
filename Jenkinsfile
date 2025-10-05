@@ -7,7 +7,7 @@ pipeline {
 
     agent {
         docker {
-            image 'laravelphp/vapor:php82'
+            image 'laravelphp/vapor:php84'
         }
     }
 
@@ -15,7 +15,7 @@ pipeline {
         stage('Backend') {
             agent {
                 docker {
-                    image 'laravelphp/vapor:php82'
+                    image 'laravelphp/vapor:php84'
                 }
             }
             stages {
@@ -54,17 +54,21 @@ pipeline {
         stage('Frontend') {
             agent {
                 docker {
-                    image 'satantime/puppeteer-node:20-buster-slim'
+                    image 'satantime/puppeteer-node:22-slim'
                 }
             }
 
             stages {
-                stage('Install NPM Dep') {
+   
+                stage('Install NPM Dependencies') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'npm install -f'
-                            sh 'npm install -g @angular/cli'
-                            sh 'npm i -D puppeteer --legacy-peer-deps && node node_modules/puppeteer/install.mjs'
+                            sh '''
+                                npm install
+                                npm install -g @angular/cli
+                                npm install webpack --save-dev -f
+                                npm i -D puppeteer --legacy-peer-deps && node node_modules/puppeteer/install.mjs
+                            '''
                         }
                     }
                 }
@@ -72,7 +76,9 @@ pipeline {
                 stage('Run Tests') {
                     steps {
                         dir('frontend-ionic') {
-                            sh 'ng test'
+                            // Add --no-sandbox flag for ChromeHeadless
+                            sh 'ng test --watch=false --progress=false --browsers=ChromeHeadlessNoSandbox --code-coverage --source-map=false'
+                        
                         }
                     }
                 }

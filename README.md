@@ -37,7 +37,7 @@ docker compose up
 4. Open new console & initialize database only on the first startup
 
 ```sh
-docker exec select20_backend_laravel sh -c  "php artisan migrate && php artisan jwt:secret -f && php artisan key:generate"
+docker exec select20_backend_laravel sh -c  "php html/artisan migrate && php  html/artisan jwt:secret -f && php  html/artisan key:generate"
 ```
 
 5. Restart docker compose --> `Strg + c` and `docker compose up` again

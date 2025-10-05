@@ -54,23 +54,6 @@ class TodoController extends Controller
         ]);
     }
 
-    public function habits(Request $request)
-    {
-
-        $user = JWTAuth::user();
-        if ($user->nextcloudkey == "") {
-            return response(['message' => 'Not authorized'], 403);
-        }
-
-        $sql = "SELECT DATE(created_at) as date,REGEXP_REPLACE(REGEXP_SUBSTR(todo, 'UID:.*'),'UID\:\s*','') as uid, REGEXP_REPLACE(REGEXP_SUBSTR(todo, 'PRIORITY:.*'),'PRIORITY\:\s*','') as prio , REGEXP_REPLACE(REGEXP_SUBSTR(todo, 'SUMMARY:(.*)\n'),'SUMMARY\:\s*','') summary FROM `histories` WHERE  user_id_fk = :userid and log_message LIKE 'Update%habits%'  and created_at BETWEEN CURDATE() - INTERVAL 40 DAY AND CURDATE()";
-        $this->saveHistory("View habit-matrix");
-
-        $user_id = $user->id;
-        $data = DB::select(DB::raw($sql)->getValue(DB::connection()->getQueryGrammar(), array('userid' => $user_id)));
-        return response($data);
-    }
-
-
     public function getRandomString($n)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

@@ -28,7 +28,7 @@ export class RruleService {
     // FREQ=WEEKLY;INTERVAL=1;BYDAY=WE
 
     let regexIntevall: RegExp = /INTERVAL=(\d+)/g;
-    let intervall: RegExpExecArray = regexIntevall.exec(todo.rrule);
+    let intervall: RegExpExecArray | null = regexIntevall.exec(todo.rrule);
     let intervallExtracted: number =
       intervall === null ? 1 : parseInt(intervall[1]);
     let nextEvent: Date;
@@ -60,7 +60,7 @@ export class RruleService {
     }
 
     let regexByDate: RegExp = /BYDAY=([A-Z][A-Z])/g;
-    let bydate: RegExpExecArray = regexByDate.exec(todo.rrule);
+    let bydate: RegExpExecArray | null = regexByDate.exec(todo.rrule);
     let byDateExtracted: string = bydate === null ? 'MO' : bydate[1];
 
     switch (byDateExtracted) {
