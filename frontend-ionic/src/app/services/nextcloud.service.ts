@@ -3,13 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Project } from '../models/project';
 import { Todo } from '../models/todo';
 import { Calendar } from '../models/calendar';
-import { proxyDomain } from '../config';
+import { defaultCalendar, proxyDomain } from '../config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NextcloudService {
-  constructor(public http: HttpClient) { }
+
+  constructor(public http: HttpClient) {
+  }
 
   getHeaders() {
     return new HttpHeaders({
@@ -68,6 +70,29 @@ export class NextcloudService {
     );
   }
 
+  getSettings() {
+    return this.http.get(
+      proxyDomain + '/auth/settings',
+      {
+        headers: this.getHeaders(),
+        withCredentials: true,
+      }
+    );
+
+  }
+
+  updateSettings(settings: any) {
+    return this.http.post(
+      proxyDomain + '/auth/settings',
+      JSON.stringify(settings),
+      {
+        headers: this.getHeaders(),
+        withCredentials: true,
+      }
+    );
+
+  }
+
   register(
     username: string,
     email: string,
@@ -109,7 +134,18 @@ export class NextcloudService {
     });
   }
 
-  deleteProjects(id: string) {
+  renameProject(url: string, name: string) {
+    return this.http.post(proxyDomain + '/auth/project', JSON.stringify({
+      url: url,
+      name: name
+    }), {
+      headers: this.getHeaders(),
+      responseType: 'text',
+      withCredentials: true,
+    });
+  }
+
+  deleteProject(id: string) {
     return this.http.delete(proxyDomain + '/auth/project/' + id, {
       headers: this.getHeaders(),
       responseType: 'text',
@@ -129,13 +165,6 @@ export class NextcloudService {
     );
   }
 
-  getHabitMatrix() {
-    return this.http.get(proxyDomain + '/auth/habits', {
-      headers: this.getHeaders(),
-      responseType: 'text',
-      withCredentials: true,
-    });
-  }
 
   logout() {
     return this.http.post(proxyDomain + '/auth/logout', '', {

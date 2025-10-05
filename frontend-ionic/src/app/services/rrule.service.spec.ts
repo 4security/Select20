@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage-angular';
 import { RegexService } from './regex.service';
 import { isSameDay, parseISO } from 'date-fns';
 import { RruleService } from './rrule.service';
@@ -81,7 +81,6 @@ describe('RruleService', () => {
   it('every mon', () => {
     todo.rrule = 'INTERVAL=1;BYDAY=SU';
     let date = service.calculateNextEvent(todo, '20220815T190000');
-    console.log(date, parseISO('20220821T190000'));
     expect(isSameDay(date, parseISO('20220821T190000'))).toBeTrue();
   });
 

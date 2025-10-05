@@ -1,12 +1,12 @@
-FROM node:21-slim AS build
+FROM node:24-slim AS build
 WORKDIR /app
 COPY package.json .
 ENV PUPPETEER_SKIP_DOWNLOAD='true'
-RUN npm install npm@9.5.0 -g
+RUN npm install npm -g
 RUN npm cache clear --force
 RUN npm install @angular/cli -g
 RUN npm install @ionic/cli -g
-RUN npm install -f 
+RUN npm install
 COPY . .
 RUN ionic build --prod
 

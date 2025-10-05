@@ -158,10 +158,6 @@ ionic build --prod && npx cap copy && npx cap sync
 - AuthController: Everything goes via middleware auth:api. Use bcrypt function for hashing passwords
 - Project & TodoController: Uses the XML request of the SabreAPI and adapt the requests
 
-## Models
-
-- History: Every action is recorded for further analysis in a habit tracker (pre alpha)
-
 # Frontend
 
 ## Central Ideas

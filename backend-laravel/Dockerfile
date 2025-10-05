@@ -1,16 +1,25 @@
-FROM composer:2.6 as build
+FROM composer:lts as build
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
-FROM laravelphp/vapor:php82 as production
+FROM php:8.4-fpm-alpine
 
-ENV APP_ENV=production
+WORKDIR /opt
+
+# Install apk packages we want
+RUN apk add -Uuv \
+    libzip-dev libpng-dev
+# Download and install composer
+RUN /bin/sh -c "curl https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
+
+
+# Install PHP extensions
+
+RUN docker-php-ext-install pdo pdo_mysql mysqli opcache pcntl gd bcmath posix zip
+ENV APP_ENV=production		
 ENV APP_DEBUG=false
 
-RUN docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install pdo pdo_mysql
 COPY --from=build /app /var/www/html
-
 
 RUN chmod 777 -R /var/www/html/storage/ && \
     chown -R www-data:www-data /var/www/ 

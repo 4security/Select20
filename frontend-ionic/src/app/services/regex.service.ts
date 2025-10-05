@@ -16,13 +16,14 @@ import {
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
 import { Project } from '../models/project';
+import { defaultCurrentProject, defaultProjects } from '../config';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegexService {
-  projectTitles: string[] = [];
+  projectTitles: String[] = [];
   projects: Project[] = []
 
   constructor(
@@ -30,7 +31,7 @@ export class RegexService {
   ) {
   }
 
-  extractKeywords(summary: string, todo: Todo, projects, projectTitles): Todo {
+  extractKeywords(summary: string, todo: Todo, projects: Project[], projectTitles: String[]): Todo {
     this.projectTitles = projectTitles;
     this.projects = projects;
 
@@ -42,8 +43,8 @@ export class RegexService {
     summary = this.detectProject(summary, todo);
     summary = this.detectChecklist(summary, todo);
 
-    // Detect up to 3 tags
-    for (let ctrTags = 0; ctrTags < 3; ctrTags++) {
+    const DETECT_MAX_TAG_NUMBER = 3;
+    for (let ctrTags = 0; ctrTags < DETECT_MAX_TAG_NUMBER; ctrTags++) {
       summary = this.detectTags(summary, todo);
     }
 
@@ -64,7 +65,7 @@ export class RegexService {
       summary.match(/[e|E]very\s\d?\s?(mon|tue|wed|thu|fri|sat|sun)/i)?.input
     ) {
       let regexEveryX: RegExp = /every\s(\d*)/g;
-      let rawEveryX: RegExpExecArray = regexEveryX.exec(summary);
+      let rawEveryX: RegExpExecArray | null = regexEveryX.exec(summary);
       let everyX: string = rawEveryX === null ? '1' : rawEveryX[1];
       if (everyX.length > 0) {
         rrule += everyX;
@@ -73,7 +74,7 @@ export class RegexService {
       }
       let regexEveryWeekday: RegExp =
         /every\s\d{0,2}\s?(mon|tue|wed|thu|fri|sat|sun)/g;
-      let everyWeekday: RegExpExecArray = regexEveryWeekday.exec(summary);
+      let everyWeekday: RegExpExecArray | null = regexEveryWeekday.exec(summary);
 
       rrule +=
         ';BYDAY=' +
@@ -95,7 +96,7 @@ export class RegexService {
   detectPriority(summary: string, todo: Todo): string {
     if (summary.match(/(\s[p|P]([1-4])|[p|P]([1-4]\s))/i)?.input) {
       let regexPriority: RegExp = /[p|P]([1-4])/g;
-      let rawPriority: RegExpExecArray = regexPriority.exec(summary);
+      let rawPriority: RegExpExecArray | null = regexPriority.exec(summary);
       todo.priority =
         rawPriority === null ? todo.priority : parseInt(rawPriority[1]);
       if (rawPriority != null) {
@@ -109,14 +110,14 @@ export class RegexService {
   detectProject(summary: string, todo: Todo): string {
     if (summary.match(/\s[0-9A-Za-z]*#[A-Za-z]+|^#[A-Za-z]+/i)?.input) {
       let regexProject: RegExp = /#([A-Za-z]+)/g;
-      let rawProject: RegExpExecArray = regexProject.exec(summary);
+      let rawProject: RegExpExecArray | null = regexProject.exec(summary);
       let project = rawProject === null ? todo.project : rawProject[1];
       let resultSearch: string = this.fuzzySearchInArray(project, this.projectTitles)[0];
 
       if (resultSearch == null || resultSearch == undefined) {
         todo.project.title = 'Inbox';
       } else {
-        todo.project = this.projects.find(project => project.title === resultSearch);;
+        todo.project = this.projects.find(project => project.title === resultSearch) ?? defaultProjects[0];
       }
       summary = summary.replace(/\s?#[A-Za-z]+/i, '');
     }
@@ -127,7 +128,7 @@ export class RegexService {
   detectTime(summary: string, todo: Todo): string {
     if (summary.match(/(\s\d?\d\:\d\d|\d?\d\:\d\d\s)/i)?.input) {
       let regexTime: RegExp = /(\d?\d\:\d\d)/g;
-      let time: RegExpExecArray = regexTime.exec(summary);
+      let time: RegExpExecArray | null = regexTime.exec(summary);
       let concreteTime: string = time === null ? '' : time[1];
       summary = summary.replace(concreteTime, '');
 
@@ -143,6 +144,13 @@ export class RegexService {
         /\d{6}$/i,
         concreteTime.replace(':', '') + '00'
       );
+    } else {
+      if (todo.rrule.includes("FREQ")) {
+        this.messageService.show(
+          '🕐 Recurring events need a time',
+          true
+        );
+      }
     }
 
     return summary;
@@ -152,7 +160,7 @@ export class RegexService {
     if (
       summary.match(/(\s\d\d\.\d\d\.\d\d\d\d|\d\d\.\d\d\.\d\d\d\d\s)/i)?.input
     ) {
-      let rawFullDate: RegExpExecArray = /(\d\d\.\d\d\.\d\d\d\d)/.exec(summary);
+      let rawFullDate: RegExpExecArray | null = /(\d\d\.\d\d\.\d\d\d\d)/.exec(summary);
       let dateString: string = rawFullDate === null ? '' : rawFullDate[1];
       if (dateString != '') {
         try {
@@ -171,7 +179,7 @@ export class RegexService {
     }
 
     if (summary.match(/(\s\d\d\.\d\d\.\d\d|\d\d\.\d\d\.\d\d\s)/i)?.input) {
-      let rawFullDate: RegExpExecArray = /(\d\d\.\d\d\.\d\d)/.exec(summary);
+      let rawFullDate: RegExpExecArray | null = /(\d\d\.\d\d\.\d\d)/.exec(summary);
       let dateString: string = rawFullDate === null ? '' : rawFullDate[1];
       if (dateString != '') {
         try {
@@ -190,7 +198,7 @@ export class RegexService {
     }
 
     if (summary.match(/(\s\d\d\.\d\d|\d\d\.\d\d\s)/i)?.input) {
-      let rawHalfDate: RegExpExecArray = /(\d\d\.\d\d)/.exec(summary);
+      let rawHalfDate: RegExpExecArray | null = /(\d\d\.\d\d)/.exec(summary);
       let dateString: string = rawHalfDate === null ? '' : rawHalfDate[1];
       if (dateString != '') {
         try {
@@ -215,63 +223,63 @@ export class RegexService {
     if (summary.match(/\s[t|T]om(orrow)?\b|[t|T]om(orrow)?\s/i)?.input) {
       todo.due = this.formatIcsDate(addDays(Date.now(), 1));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[t|T]om/i, '');
+      summary = summary.replace(/\s?[t|T]om(orrow)?/i, '');
     }
 
     if (summary.match(/\s[t|T]od(ay)?\b|[t|T]od(ay)?\s/i)?.input) {
       todo.due = this.formatIcsDate(Date.now());
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[t|T]od/i, '');
+      summary = summary.replace(/\s?[t|T]od(ay)?/i, '');
     }
 
     if (summary.match(/\s[m|M]on(day)?\b|[m|M]on(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextMonday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[m|M]on/i, '');
+      summary = summary.replace(/\s?[m|M]on(day)?/i, '');
     }
 
     if (summary.match(/\s[t|T]ue(sday)?\b|[t|T]ue(sday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextTuesday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[t|T]ue/i, '');
+      summary = summary.replace(/\s?[t|T]ue(sday)?/i, '');
     }
 
     if (summary.match(/\s[w|W]ed(nesday)?\b|[w|W]ed(nesday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextWednesday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[w|W]ed/i, '');
+      summary = summary.replace(/\s?[w|W]ed(nesday)?/i, '');
     }
 
     if (summary.match(/\s[t|T]hu(rsday)?\b|[t|T]hu(rsday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextThursday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[t|T]hu/i, '');
+      summary = summary.replace(/\s?[t|T]hu(rsday)?/i, '');
     }
 
     if (summary.match(/\s[F|f]ri(day)?\b|[F|f]ri(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextFriday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[F|f]ri/i, '');
+      summary = summary.replace(/\s?[F|f]ri(day)?/i, '');
     }
 
     if (summary.match(/\s[s|S]at(urday)?\b|[s|S]at(urday)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextSaturday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[s|S]at/i, '');
+      summary = summary.replace(/\s?[s|S]at(urday)?/i, '');
     }
 
     if (summary.match(/\s[s|S]un(day)?\b|[s|S]un(day)?\s/i)?.input) {
       todo.due = this.formatIcsDate(nextSunday(Date.now()));
       todo.due = todo.due.replace(/\d{6}\b/i, '000000');
-      summary = summary.replace(/\s?[s|S]un/i, '');
+      summary = summary.replace(/\s?[s|S]un(day)?/i, '');
     }
 
     return summary;
   }
 
-  fuzzySearchInArray(item, array: any[] = this.projectTitles): any[] {
+  fuzzySearchInArray(item: any, array: any[] = this.projectTitles): any[] {
     function oc(array: any[]) {
-      let object = {};
+      let object: { [key: string]: string } = {};
       for (let i = 0; i < array.length; i++) object[array[i]] = '';
       return object;
     }
@@ -297,7 +305,7 @@ export class RegexService {
                 .indexOf(test[r].toLowerCase().split('*')[1]) -
               array[i]
                 .toLowerCase()
-                .indexOf(test[r].toLowerCase().split('*')[0] < 2)
+                .indexOf(parseInt(test[r].toLowerCase().split('*')[0]) < 2)
             )
               if (!(array[i] in oc(result))) result.push(array[i]);
       }
@@ -308,7 +316,7 @@ export class RegexService {
   detectDuration(summary: string, todo: Todo): string {
     if (summary.match(/\s([0-9]{1,3})m|([0-9]{1,3})m\s/i)?.input) {
       let regexDuration: RegExp = /([0-9]{1,3})m/g;
-      let rawDuration: RegExpExecArray = regexDuration.exec(summary);
+      let rawDuration: RegExpExecArray | null = regexDuration.exec(summary);
       todo.duration = rawDuration === null ? 30 : parseInt(rawDuration[1]);
 
       if (todo.due != '') {
@@ -341,7 +349,7 @@ export class RegexService {
   detectTags(summary: string, todo: Todo): string {
     if (summary.match(/\@\w{2,15}\b/i)?.input) {
       let regexTags: RegExp = /\@(\w{2,15})\b/g;
-      let rawTags: RegExpExecArray = regexTags.exec(summary);
+      let rawTags: RegExpExecArray | null = regexTags.exec(summary);
       if (rawTags != null) {
         todo.tags.push(rawTags[1])
         summary = summary.replace("@" + rawTags[1], '');
@@ -351,7 +359,7 @@ export class RegexService {
     return summary;
   }
 
-  formatIcsDate(date): string {
+  formatIcsDate(date: any): string {
     return formatISO(date, { format: 'basic' }).replace(/\+\d\d:00/i, '');
   }
 

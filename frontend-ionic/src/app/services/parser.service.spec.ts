@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { Todo } from '../models/todo';
 import { MessageService } from './message.service';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage-angular';
 import { RegexService } from './regex.service';
 import { addDays, isFriday, isSaturday, parseISO } from 'date-fns';
 import { ParserService } from './parser.service';
 import { RruleService } from './rrule.service';
 import { Project } from '../models/project';
-import { defaultCurrentProject } from '../config';
+import { defaultCalendar, defaultCurrentProject } from '../config';
 
 describe('ParserService', () => {
   let service: ParserService;
@@ -88,9 +88,9 @@ describe('ParserService', () => {
       url: 'myproject',
       colour: '',
       position: 0,
-      calendar: null,
+      calendar: defaultCalendar,
       sorting: 1,
-      visible: true,
+      status: "normal",
       count: 0,
     };
 
