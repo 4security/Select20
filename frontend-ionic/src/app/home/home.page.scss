@@ -204,7 +204,6 @@ ion-modal ion-content {
     transition: 0.2s ease-in-out;
     font-family: Inter, Arial, Helvetica, sans-serif;
     display: flex;
-    -webkit-flex-flow: row wrap;
     justify-content: space-around;
     -webkit-justify-content: space-around;
     flex-wrap: nowrap;
@@ -390,6 +389,7 @@ ion-title img {
 
 @media only screen and (max-width: 600px) {
 
+
     #mainPane,
     #headingPane,
     #newTodoPane {
@@ -438,8 +438,7 @@ ion-title img {
         position: fixed;
         top: 400px;
         left: 0px;
-        border-radius: 0px !important;
-        background-color: black;
+        border-radius: 10px !important;
         padding: 20px 0;
         z-index: 100;
         overflow: hidden;
@@ -498,5 +497,17 @@ ion-title img {
         display: inline-block;
     }
 
+    #newTodoInput,
+    #newTodoPane,
+    #newTodoInputWrapper,
+    #newTodoPane icon-icon,
+    #supertask {
+        background: var(--font) !important;
+        color: var(--panel);
 
+    }
+
+    #newTodoInput {
+        border: 3px var(--panel) solid;
+    }
 }

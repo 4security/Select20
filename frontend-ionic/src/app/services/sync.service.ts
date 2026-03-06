@@ -137,7 +137,7 @@ export class SyncService {
       next: (settings: any) => {
         this.parseSettings(JSON.parse(settings.settings));
       },
-      error: (error) => {
+      error: (error: any) => {
         this.messageService.show('Error Get Settings', true);
         console.error(
           '⭕ Error loading settings', error
@@ -190,7 +190,7 @@ export class SyncService {
                 this.messageService.show('💾 Sync Offline Todo');
                 this.queueLength = this.queue.length;
               },
-              error: (error) => {
+              error: (error: any) => {
                 this.messageService.show('Error Sync Offline Todo', true);
                 console.error(
                   '⭕ Error Push offline todo',
@@ -274,7 +274,7 @@ export class SyncService {
           });
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('⭕ Cannot get projects', JSON.stringify(error));
         this.syncActive = false;
         if (error.status == 401 || error.status == 403) {
@@ -321,7 +321,7 @@ export class SyncService {
             }
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error(
             '⭕ Cannot get todo list' + project.url,
             JSON.stringify(error)

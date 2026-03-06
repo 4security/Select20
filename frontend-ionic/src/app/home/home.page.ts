@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import {
   addDays,
   format,
@@ -27,7 +27,6 @@ import {
   defaultProjects,
 } from '../config';
 import { SyncService } from '../services/sync.service';
-import { HttpClientModule } from "@angular/common/http";
 import { addIcons } from "ionicons";
 import { add, addCircle, addOutline, arrowUndo, calendar, close, ellipsisHorizontal, help, hourglass, link, logOut, menu, pricetag, repeat, search, refresh, eye, cloudOffline, checkbox, trash } from 'ionicons/icons';
 import { NgForOf, NgIf } from "@angular/common";
@@ -41,7 +40,7 @@ import { NgForOf, NgIf } from "@angular/common";
   styleUrls: ['./home.page.scss'],
   standalone: true,
   providers: [Storage, ParserService, RegexService, RruleService, MessageService, NextcloudService, SyncService],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, FormsModule, IonButtons, IonFabButton, IonFab, IonIcon, HttpClientModule, NgForOf, NgIf, IonModal, IonIcon, IonItem, IonModal,],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, FormsModule, IonButtons, IonFabButton, IonFab, IonIcon, NgForOf, NgIf, IonModal, IonIcon, IonItem, IonModal,],
 })
 export class HomePage implements OnInit {
   todos: Todo[] = [];
@@ -131,7 +130,8 @@ export class HomePage implements OnInit {
     private regexService: RegexService,
     private rruleService: RruleService,
     private alertController: AlertController,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public cd: ChangeDetectorRef
   ) {
     addIcons({ menu, help, search, calendar, close, pricetag, addOutline, link, repeat, hourglass, addCircle, ellipsisHorizontal, refresh, cloudOffline, arrowUndo, logOut, add, eye, checkbox, trash });
     if (window.innerWidth <= 600) {
@@ -395,7 +395,7 @@ export class HomePage implements OnInit {
             }
 
           },
-          error: (error) => {
+          error: (error: any) => {
             this.messageService.show('Error Undo Change' + error, true);
             console.error(
               '⭕ Error Undo Change',
@@ -550,7 +550,7 @@ export class HomePage implements OnInit {
               return false;
             }
           },
-          error: (error) => {
+          error: (error: any) => {
             const STATUS_CODE_OFFLINE = 0;
 
             if (error.status == STATUS_CODE_OFFLINE) {
@@ -672,6 +672,7 @@ export class HomePage implements OnInit {
         this.sortByPriority();
         break;
     }
+    this.cd.detectChanges()
 
     if (window.innerWidth <= 600) {
       this.buttonsPane.nativeElement.style.left = '-100vw';
@@ -860,7 +861,7 @@ export class HomePage implements OnInit {
 
   logout() {
     clearInterval(this.syncTest);
-    this.nextcloud.logout().subscribe((data) => {
+    this.nextcloud.logout().subscribe((data: any) => {
       console.log("✅ Logged out!");
       this.messageService.show("You are logged out!");
 
@@ -912,7 +913,7 @@ export class HomePage implements OnInit {
         this.isLoginScreenOpen = false;
 
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Credentials not correct', JSON.stringify(error));
         this.messageService.show('⭕ Credentials not correct');
       },
@@ -961,7 +962,7 @@ export class HomePage implements OnInit {
           console.log("Login Self hosted worked", loginAnswer)
           this.messageService.show("Register successful. Login now!");
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error("Self hosting login failed", error)
           this.messageService.show(
             'Error register - validate your inputs'
@@ -970,11 +971,4 @@ export class HomePage implements OnInit {
 
       });
   }
-
-
-
-
-
-
-
 }
