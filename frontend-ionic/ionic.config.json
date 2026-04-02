@@ -1,0 +1,8 @@
+{
+  "name": "effectivDo",
+  "integrations": {
+    "capacitor": {},
+    "cordova": {}
+  },
+  "type": "angular"
+}

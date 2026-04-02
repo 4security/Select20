@@ -1,0 +1,247 @@
+<ion-header padding-top>
+  <ion-toolbar *ngIf="isPhoneView">
+    <ion-buttons slot="start">
+      <ion-button (click)="showMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      <img src="../../assets/icon/drawable-hdpi-icon.png" height="35px" width="35px" />
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button (click)="refresh()" [style.background]="isSyncActive ? 'var(--danger)' : 'var(--button)'">
+        <span *ngIf="queueLength != 0">{{queueLength}}</span>
+        <ion-icon [name]="refreshIcon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" id="background">
+  <div id="container">
+    <div id="todayPane">{{today}}</div>
+
+    <div id="buttonsPane" #buttonsPane>
+      <div class="buttonContainer"><ion-icon class="loader" [name]="refreshIcon"
+          [style.background]="isSyncActive ? 'var(--danger)' : 'var(--buttons)'" (click)="refresh()"></ion-icon></div>
+      <div class="buttonContainer"><ion-icon name="arrow-undo" (click)="undo()"></ion-icon></div>
+      <div class="buttonContainer"><ion-icon name="search" (click)="switchSearchMode()"></ion-icon></div>
+      <div class="buttonContainer"><a href="/explain"><ion-icon name="help"></ion-icon></a></div>
+      <div class="buttonContainer"> <ion-icon name="log-out" (click)="logout()"></ion-icon></div>
+
+    </div>
+
+    <div id="headingPane" (click)="showMenu()">{{heading}}</div>
+
+    <div id="newTodoPane" *ngIf="!isFABShown">
+      <div id="supertask" *ngIf="isInSearchMode">
+        <div id="superTodoText">Start to search</div>
+        <div id="closeSuperTask" (click)="switchSearchMode()">
+          <ion-icon name="close"></ion-icon>
+        </div>
+      </div>
+      <div id="supertask" *ngIf="superTodoText != ''">
+        <div id="superTodoText">{{superTodoText }}</div>
+        <div id="closeSuperTask" (click)="leaveSubTaskMode()">
+          <ion-icon name="close"></ion-icon>
+        </div>
+      </div>
+
+      <div>
+        <div class="iconwrapper">
+          <ion-icon name="close" (click)="showNewInput()"></ion-icon>
+        </div>
+        <div id="newTodoInputWrapper">
+          <input id="newTodoInput" inputmode="text" autocapitalize="none" autocapitalize="none"
+            (keyup.enter)="extractTextFromInput($event)" (keydown.control.ArrowDown)="switchSearchMode()"
+            (keyup)="search($event)" />
+        </div>
+      </div>
+
+    </div>
+
+    <div id="projectsPane" #projectPane>
+      <div *ngFor="let project of projects">
+        <div class="project" *ngIf="project.status != 'deleted'" (click)="showProjectTodos(project)">
+          {{project.title}}
+
+          <div id="edit">
+            <div class="editicons" (click)="openModal(project)">
+              <ion-icon name="ellipsis-horizontal"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ion-modal [isOpen]="isModalOpen" trigger="asfdsaff">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Edit Project {{currentProject.title}}</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="saveProject()" [strong]="true">Save</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-input label="Project Name" labelPlacement="stacked" type="text" placeholder="Project Name"
+                [(ngModel)]="newProjectName"></ion-input>
+            </ion-item><br><br>
+            <ion-button (click)="deleteProject()" color="danger"><ion-icon name="trash"></ion-icon>
+              Delete</ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <div *ngFor="let tag of tags">
+        <div class="project" (click)="showTag(tag)">
+          <ion-icon name="pricetag"></ion-icon> {{tag}}
+        </div>
+      </div>
+      <div class="project" id="addProject" (click)="addProject()">
+        <ion-icon name="add-outline"></ion-icon>
+      </div>
+    </div>
+
+    <div id="mainPane" [style.top]="isInSearchMode || superTodoText != '' ? '232px' : '192px'">
+      <div>
+        <div *ngFor="let todo of todos">
+          <div class="todo" *ngIf="(todo.isVisible)">
+            <div class="tickboxcage" (click)="toggleTodo(todo)">
+              <div class="tickbox" [style.border-color]="getColor(todo)"></div>
+            </div>
+            <div class="todotext">
+              <div class="title" contenteditable="true" autocapitalize="none"
+                (keyup.enter)="changeSummary($event, todo)">
+                {{todo.title}}
+              </div>
+              <a *ngIf="getURL(todo.title) != 'none' " [href]="getURL(todo.title)" target="_blank">
+                <ion-icon name="link" class="subtaskbutton"></ion-icon>
+              </a>
+              <ion-icon name="add-circle" class="subtaskbutton" (click)="addSubtask(todo)">
+              </ion-icon>
+
+              <br />
+
+              <div class="date chip" *ngIf="todo.due != ''" (click)="deleteDueDate(todo)"
+                [style.color]="todo.isOverdue ? 'var(--danger)' : 'var(--font)'">
+                <span *ngIf="todo.rrule != ''">
+                  <ion-icon name="repeat"></ion-icon>
+                </span>
+                {{formatDate(todo)}}
+              </div>
+
+              <div class="chip" *ngIf="todo.isChecklist">
+                <ion-icon name="checkbox"></ion-icon> Checklist
+              </div>
+              <div class="projectchip chip" *ngIf="todo.project.url != currentProject.url">
+                {{todo.project.title}}
+              </div>
+              <div class="chip" *ngIf="todo.duration != 30">
+                <ion-icon name="hourglass"></ion-icon>
+                {{todo.duration}}m
+              </div>
+              <div *ngFor="let tag of todo.tags" style="display: inline;">
+                <div class="chip" *ngIf="tag!=''" style="display: inline;" (click)="deleteTag(todo, tag)">
+                  <ion-icon name="pricetag"></ion-icon>
+                  {{tag}}
+                </div>
+              </div>
+            </div>
+
+            <br />
+          </div>
+
+          <div *ngFor="let relatedTodo of todo.subs">
+            <div class="todo relatedTodo" *ngIf="relatedTodo.isVisible && todo.isVisible">
+              <div class="tickboxcage" (click)="toggleTodo(relatedTodo)">
+                <div class="tickbox" [style.border-color]="getColor(relatedTodo)"></div>
+              </div>
+              <div class="todotext">
+                <div class="title" contenteditable="true" (keyup.enter)="changeSummary($event, relatedTodo)">
+                  {{relatedTodo.title}}
+                </div>
+
+                <a *ngIf="getURL(todo.title) != 'none' " [href]="getURL(relatedTodo.title)" target="_blank">
+                  <ion-icon name="link" class="subtaskbutton"></ion-icon>
+                </a>
+                <br />
+                <div class="date chip" *ngIf="relatedTodo.due != ''" (click)="deleteDueDate(relatedTodo)"
+                  [style.color]="relatedTodo.isOverdue ? 'var(--danger)' : 'var(--font)'">
+                  <span *ngIf="relatedTodo.rrule != ''">
+                    <ion-icon name="repeat"></ion-icon>
+                  </span>
+                  {{formatDate(relatedTodo)}}
+                </div>
+                <div class="chip" *ngIf="relatedTodo.duration != 30">
+                  <ion-icon name="hourglass"></ion-icon>
+                  {{relatedTodo.duration}}m
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="isFABShown" (click)="showNewInput()">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-modal [isOpen]="isLoginScreenOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Welcome</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="arcord">
+          <h2>Login</h2>
+
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emailLogin" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordLogin" placeholder="Password" />
+          <ion-button (click)="login()">Login</ion-button>
+        </div>
+        <div class="arcord">
+          <h2>Demo Mode</h2>
+
+          <p>
+            Demo Mode automatically reset all todos. This only for testing the
+            software. If you want to permanently use Select20 choose Register -
+            Free Acount
+          </p>
+          <ion-button (click)="startDemoMode()">Start Demo Mode</ion-button>
+        </div>
+        <div class="arcord">
+          <h2>Register - Self Hosted</h2>
+
+          <p>You can only this if you setup Select20 with the provided docker compose.</p>
+          <ion-input aria-label="Name" type="text" [(ngModel)]="nameRegisterSelfHosted" placeholder="Name" />
+          <ion-input aria-label="Email" type="email" [(ngModel)]="emailRegisterSelfHosted" placeholder="E-Mail" />
+          <ion-input aria-label="Password" type="password" [(ngModel)]="passwordRegisterSelfHosted"
+            placeholder="Password (12+ chars, use Password Manager)" />
+          <p>
+            The Nextcloud-URL have the format
+            https://[host]/remote.php/dav/calendars/[user]/. The Nextcloud
+            API-Key is available in "Administration Settings > Security > Create
+            new app password.
+          </p>
+          <ion-input aria-label="Nextcloud-URL" type="text" [(ngModel)]="nextcloudUrl" placeholder="Nextcloud-URL" />
+          <ion-input aria-label="Nextcloud-API-Key" type="text" [(ngModel)]="nextcloudAPI"
+            placeholder="Nextcloud-API-Key" />
+          <ion-button (click)="registerSelfHosted()">Setup Self Hosted Account</ion-button>
+        </div>
+        <br /><br />
+        <p>
+          <a href="https://lippke.li/impressum/">Impressum & Datenschutzerklärung / Impress & Data Protection</a>
+        </p>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

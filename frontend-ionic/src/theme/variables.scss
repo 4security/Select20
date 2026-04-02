@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'Inter';
+    src: url("../assets/inter.woff2");
+}
+
+@font-face {
+    font-family: 'InterBold';
+    src: url("../assets/interbold.woff2");
+}
+
+:root {
+    --ion-font-family: 'Inter';
+    --ion-text-color: var(--font);
+    --ion-text-color-rgb: var(--font);
+    --ion-item-background: var(--panel);
+    --danger: darkred;
+    --background: #f8f8f8;
+    --panel: #ececec;
+    --buttons: #cfcfcf;
+    --font: #1a1a1a;
+    --tint: #303030;
+    --ion-background-color: var(--background);
+    --ion-background-color-step-50: var(--buttons);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+
+        --ion-font-family: 'Inter';
+        --ion-text-color: var(--font);
+        --ion-text-color-rgb: var(--font);
+        --ion-item-background: var(--panel);
+        --danger: rgb(202, 0, 0);
+        --background: #1a1a1a;
+        --panel: #050505;
+        --buttons: #171717;
+        --font: #ececec;
+        --tint: #d0d0d0;
+        --ion-background-color: var(--background);
+        --ion-background-color-step-50: var(--buttons);
+    }
+}

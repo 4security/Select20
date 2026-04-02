@@ -1,0 +1,513 @@
+ion-title {
+    text-align: center;
+}
+
+.tickbox {
+    height: 20px;
+    min-width: 20px;
+    border-radius: 30px;
+    background: var(--panel);
+    border: 3px solid var(--tint);
+    display: inline-block;
+    margin-right: 5px;
+    margin-top: 5px;
+    transition: 0.2s ease-in-out;
+}
+
+#superTodoText {
+    width: 90%;
+    display: inline;
+}
+
+.tickbox:hover {
+    background: var(--tint);
+}
+
+@keyframes strike {
+    0% {
+        transform-origin: 0% 50%;
+        transform: scaleX(0);
+    }
+
+    100% {
+        transform-origin: 0% 50%;
+        transform: scaleX(1);
+    }
+}
+
+.todo {
+    position: relative;
+}
+
+.tickboxcage:hover:after {
+    content: ' ';
+    position: absolute;
+    top: 22px;
+    left: 30px;
+    width: 87%;
+    height: 2px;
+    background: var(--tint);
+    animation: strike .55s ease-in-out forwards;
+}
+
+.loader .icon-inner {
+    animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+ion-modal ion-content {
+    text-align: center;
+}
+
+.project {
+    padding: 7px !important;
+    margin-bottom: 5px;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+.project ion-icon {
+    margin-bottom: -2px;
+}
+
+.editicons {
+    float: right;
+    color: var(--buttons);
+    margin-top: -14px;
+}
+
+.project:hover .editicons {
+    color: var(--font);
+}
+
+.subtaskbutton {
+    color: var(--buttons);
+    vertical-align: middle;
+    font-size: 25px;
+    float: right;
+    margin-top: 2px;
+}
+
+.todo:hover .subtaskbutton {
+    color: var(--font);
+    transition: 0.4s ease-in-out;
+}
+
+.todo {
+    padding: 7px;
+    display: flex;
+    font-size: 14px;
+    transition: 0.8s ease-in-out;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+
+.todotext {
+    float: right;
+    width: 100%;
+}
+
+.relatedTodo {
+    margin-left: 40px;
+}
+
+.project:hover,
+#newTodoInput:active #newTodoPane {
+    background: var(--buttons);
+}
+
+.title {
+
+    display: inline-block;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    width: calc(100% - 35px);
+    margin-right: 5px;
+}
+
+.title:hover {
+    background: var(--buttons);
+}
+
+.chip {
+    background: var(--buttons);
+    padding: 2px 10px;
+    font-size: 12px;
+    border-radius: 30px;
+    display: inline-block;
+    margin: 5px 10px 1px 0;
+    height: 21px;
+}
+
+.chip ion-icon {
+    vertical-align: middle;
+}
+
+.ion-title {
+    text-align: center;
+}
+
+#container {
+    background: var(--ion-background-color);
+    color: var(--font) !important;
+    padding-bottom: 100px;
+}
+
+#mainPane {
+    background: var(--panel);
+    width: 45%;
+    padding: 0.8vw;
+    position: absolute;
+    left: 37%;
+    border-radius: 5px;
+    top: 192px;
+    min-height: 70vh;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+#todayPane {
+    background: var(--panel);
+    width: 15%;
+    padding: 10px 0.8vw;
+    position: absolute;
+    left: 21%;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+    top: 70px;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+#buttonsPane {
+    background: var(--panel);
+    width: 15%;
+    position: absolute;
+    left: 21%;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+    padding: 10px 0.8vw;
+    height: 52px;
+    top: 125px;
+    transition: 0.2s ease-in-out;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+    flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
+}
+
+#buttonsPane ion-icon,
+#newTodoPane ion-icon {
+    flex-grow: 2;
+    padding: 5px;
+    margin-right: 5px;
+    height: 22px;
+    border-radius: 5px;
+    background-color: var(--buttons);
+    color: var(--font);
+    font-size: 18px;
+    transition: 0.4s ease-in-out;
+}
+
+#buttonsPane .buttonContainer {
+    width: 20%;
+}
+
+#newTodoPane ion-icon {
+    display: inline-block;
+    margin: 0;
+}
+
+#newTodoPane ion-icon {
+    padding: 4px;
+}
+
+#buttonsPane ion-icon:hover {
+    background-color: var(--buttons);
+}
+
+#todayPane:hover ion-icon {
+    color: var(--font);
+}
+
+#headingPane {
+    background: var(--panel);
+    width: 45%;
+    padding: 10px 0.8vw;
+    position: absolute;
+    left: 37%;
+    border-radius: 5px;
+    font-size: 20px;
+    text-align: center;
+    top: 70px;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    line-height: 24px;
+}
+
+#newTodoPane {
+    background: var(--panel);
+    width: 45%;
+    padding: 11px 1vw;
+    position: absolute;
+    left: 37%;
+    border-radius: 5px;
+    top: 125px;
+    z-index: 100;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+#projectsPane {
+    background: var(--panel);
+    width: 15%;
+    position: absolute;
+    left: 21%;
+    border-radius: 5px;
+    top: 192px;
+    min-height: 70vh;
+    padding: 0.8vw;
+    transition: 0.2s ease-in-out;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+ion-toast,
+.toast-wrapper,
+.toast-container,
+.toast-bottom {
+    bottom: 100px !important;
+}
+
+#newTodoInput {
+    padding: 5px;
+    height: 30px;
+}
+
+#newTodoInput,
+#supertask,
+.project {
+    background: var(--buttons);
+    border-radius: 5px;
+    border: 0px var(--buttons) solid;
+}
+
+input:active #newTodoPane {
+    background: var(--panel);
+}
+
+#newTodoInput {
+    width: 100%;
+    display: inherit;
+}
+
+.iconwrapper {
+    display: inline-block;
+}
+
+.iconwrapper:first-child {
+    display: none;
+}
+
+.iconwrapper:last-child {
+    margin-left: 15px;
+    float: right;
+}
+
+.iconwrapper:last-child ion-icon {
+    padding-top: 3px;
+}
+
+#newTodoInputWrapper {
+    display: inline-block;
+    width: calc(100%);
+}
+
+#supertask {
+    background: var(--buttons);
+    padding: 6px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#closeSuperTask {
+    margin-top: -7px;
+    float: right;
+    font-size: 20px;
+}
+
+ion-title img {
+    vertical-align: middle;
+    border-radius: 5px;
+}
+
+.arcord {
+    background-color: var(--panel);
+    text-align: center;
+    padding: 10px 0.8vw;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.arcord ion-button {
+    margin-top: 20px;
+}
+
+
+#addProject {
+    text-align: center;
+}
+
+@media only screen and (max-width: 1600px) {
+
+    #mainPane,
+    #headingPane,
+    #newTodoPane {
+        width: 62vw;
+        left: 30vw;
+    }
+
+    #todayPane,
+    #buttonsPane,
+    #projectsPane {
+        width: 24vw;
+        left: 5vw;
+        z-index: 10;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+
+    #mainPane,
+    #headingPane,
+    #newTodoPane {
+        font-weight: 700;
+        width: 95vw;
+        left: 2.5vw;
+    }
+
+
+    #newTodoInput {
+        margin-top: 3px;
+        width: calc(100% - 20px);
+    }
+
+    #newTodoInputWrapper {
+        display: inline-block;
+        width: calc(100% - 40px);
+        float: right;
+    }
+
+    .iconwrapper:first-child {
+        display: inline-block;
+        margin-right: -10px;
+        margin-top: 3px;
+        float: left;
+        margin-left: 10px;
+    }
+
+    .iconwrapper:last-child {
+        margin-left: 5px;
+        float: right;
+        margin-top: -30px;
+    }
+
+
+    #mainPane {
+        top: 155px;
+        min-height: 800px;
+    }
+
+    #headingPane {
+        position: fixed;
+    }
+
+    #newTodoPane {
+        position: fixed;
+        top: 400px;
+        left: 0px;
+        border-radius: 10px !important;
+        padding: 20px 0;
+        z-index: 100;
+        overflow: hidden;
+        height: auto;
+    }
+
+
+    #headingPane {
+        top: 85px;
+        height: 90px;
+        padding-top: 35px;
+        font-size: 25px;
+    }
+
+    #todayPane {
+        display: none;
+    }
+
+    #projectsPane {
+        top: 192px;
+        width: 95vw;
+        left: -100vw;
+        z-index: 10;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
+        font-weight: 700;
+    }
+
+    #buttonsPane {
+        top: 90px;
+        width: 95vw;
+        left: -100vw;
+        z-index: 10;
+        height: 90px;
+        padding-top: 27px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    #buttonsPane ion-icon,
+    #buttonsPane a ion-icon {
+        font-size: 18px;
+        padding: 8px;
+    }
+
+    .project {
+        padding: 10px 20px !important;
+        margin-bottom: 8px;
+    }
+
+    #superTodoText {
+        width: 90%;
+        overflow: hidden;
+        height: 21px;
+        display: inline-block;
+    }
+
+    #newTodoInput,
+    #newTodoPane,
+    #newTodoInputWrapper,
+    #newTodoPane icon-icon,
+    #supertask {
+        background: var(--font) !important;
+        color: var(--panel);
+
+    }
+
+    #newTodoInput {
+        border: 3px var(--panel) solid;
+    }
+}
